@@ -16,8 +16,8 @@ import {parseDate} from '../interface';
 import styleConstructor from './style';
 import CalendarList from '../calendar-list';
 import asCalendarConsumer from './asCalendarConsumer';
+import WeekCalendar from './weekCalendar';
 import Week from './week';
-
 
 const commons = require('./commons');
 const UPDATE_SOURCES = commons.UPDATE_SOURCES;
@@ -55,7 +55,9 @@ class ExpandableCalendar extends Component {
     /** source for the right arrow image */
     rightArrowImageSource: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.func]),
     /** whether to have shadow/elevation for the calendar */
-    allowShadow: PropTypes.bool
+    allowShadow: PropTypes.bool,
+    /** whether to disable the week scroll in closed position */
+    disableWeekScroll: PropTypes.bool
   }
 
   static defaultProps = {
@@ -407,6 +409,8 @@ class ExpandableCalendar extends Component {
 
   renderWeekCalendar() {
     const {position} = this.state;
+    const {disableWeekScroll} = this.props;
+    const WeekComponent = disableWeekScroll ? Week : WeekCalendar;
 
     return (
       <Animated.View
@@ -420,7 +424,7 @@ class ExpandableCalendar extends Component {
         }}
         pointerEvents={position === POSITIONS.CLOSED ? 'auto' : 'none'}
       >
-        <Week
+        <WeekComponent
           {...this.props}
           current={this.props.context.date}
           onDayPress={this.onDayPress}
@@ -454,7 +458,7 @@ class ExpandableCalendar extends Component {
   }
 
   render() {
-    const {style, hideKnob, horizontal, allowShadow, theme} = this.props;
+    const {style, hideKnob, horizontal, allowShadow, theme, ...others} = this.props;
     const {deltaY, position} = this.state;
     const isOpen = position === POSITIONS.OPEN;
     const themeObject = Object.assign(this.headerStyleOverride, theme);
@@ -468,7 +472,8 @@ class ExpandableCalendar extends Component {
         >
           <CalendarList
             testID="calendar"
-            {...this.props}
+            horizontal={horizontal}
+            {...others}
             theme={themeObject}
             ref={r => this.calendar = r}
             current={this.initialDate}
