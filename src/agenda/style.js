@@ -8,7 +8,7 @@ const STYLESHEET_ID = 'stylesheet.agenda.main';
 export default function styleConstructor(theme = {}) {
   const appStyle = {...defaultStyle, ...theme};
   const {knob, weekdays} = platformStyles(appStyle);
-  
+
   return StyleSheet.create({
     knob,
     weekdays,
@@ -27,6 +27,7 @@ export default function styleConstructor(theme = {}) {
       height: 24,
       bottom: 0,
       alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: appStyle.calendarBackground
     },
     weekday: {
