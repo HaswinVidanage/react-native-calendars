@@ -59,6 +59,16 @@ class AgendaList extends Component {
     return i;
   }
 
+  componentDidMount() {
+    const {date} = this.props.context;
+    if (date !== this._topSection) {
+      setTimeout(() => {
+        const sectionIndex = this.getSectionIndex(date);
+        this.scrollToSection(sectionIndex);
+      }, 500);
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const {updateSource, date} = this.props.context;
     if (date !== prevProps.context.date) {
@@ -121,11 +131,16 @@ class AgendaList extends Component {
   }
 
   renderSectionHeader = ({section: {title}}) => {
-    const today = XDate().toString(this.props.dayFormat);
-    const date = XDate(title).toString(this.props.dayFormat);
-    const todayString = XDate.locales[XDate.defaultLocale].today || commons.todayString;
-    const sectionTitle = date === today ? `${todayString}, ${date}` : date;
-    
+    let sectionTitle = title;
+
+    if (this.props.dayFormat) {
+      const date = XDate(title).toString(this.props.dayFormat);
+      const today = XDate().toString(this.props.dayFormat);
+      const todayString = XDate.locales[XDate.defaultLocale].today || commons.todayString;
+      
+      sectionTitle = date === today ? `${todayString}, ${date}` : date;
+    }
+
     return (
       <Text allowFontScaling={false} style={[this.style.sectionText, this.props.sectionStyle]} onLayout={this.onHeaderLayout}>{sectionTitle}</Text>
     );
@@ -148,7 +163,7 @@ class AgendaList extends Component {
         onScroll={this.onScroll}
         onMomentumScrollBegin={this.onMomentumScrollBegin}
         onMomentumScrollEnd={this.onMomentumScrollEnd}
-        // onScrollToIndexFailed={(info) => { console.warn('onScrollToIndexFailed info: ', info); }}
+        onScrollToIndexFailed={(info) => { console.warn('onScrollToIndexFailed info: ', info); }}
         // getItemLayout={this.getItemLayout} // onViewableItemsChanged is not updated when list scrolls!!!
       />
     );

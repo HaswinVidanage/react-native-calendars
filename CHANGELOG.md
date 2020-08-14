@@ -285,3 +285,40 @@
 
 ## [1.261.0] - 2020-2-5
 - Calendar - adding accessibility features.
+
+## [1.262.0] - 2020-2-18
+- Agenda - adding scroll events callbacks (PR #1063).
+
+## [1.263.0] - 2020-2-18
+- Calendar - passing testID to header (PR #1058).
+
+## [1.264.0] - 2020-3-3
+- CalendarListItem - fix previous months bug (PR #1069).
+
+## [1.265.0] - 2020-3-12
+- Setup Detox for e2e tests (iOS).
+
+## [1.282.0] - 2020-6-04
+- New Feature - Enable swipe in calendar
+
+## [1.291.0] - 2020-6-10
+- New Feature - Render custom header in calendar
+- Update Calendar List's example with the new feature
+
+## [1.292.0] - 2020-6-10
+- New Feature - Show should six weeks in the calendar by passing showSixWeeks
+
+## [1.297.0] - 2020-6-17
+- Bug Fix - Calendar isn't getting re-rendered if the first day prop is changed.
+
+## [1.298.0] - 2020-6-17
+- New Feature - Control the swipe on Calendar with new prop - enableSwipeMonths
+
+## [1.299.0] - 2020-8-5
+- Fix - Android RNN version and configuration (PR #1251).
+
+## [1.300.0] - 2020-8-5
+- Fix - ExpandableCalendar and AgendaList RTL style.
+
+## [1.309.0] - 2020-8-12
+- Fix - AgendaList - check 'dayFormat' prop before passing to XDate.toString().
