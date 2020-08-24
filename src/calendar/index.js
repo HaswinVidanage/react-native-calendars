@@ -98,7 +98,9 @@ class Calendar extends Component {
     /** Replace default month and year title with custom one. the function receive a date as parameter. */
     renderHeader: PropTypes.any,
     /** Enable the option to swipe between months. Default: false */
-    enableSwipeMonths: PropTypes.bool
+    enableSwipeMonths: PropTypes.bool,
+    /** Disable Calendar header completely */
+    renderTopHeader: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -117,6 +119,13 @@ class Calendar extends Component {
     this.pressDay = this.pressDay.bind(this);
     this.longPressDay = this.longPressDay.bind(this);
     this.shouldComponentUpdate = shouldComponentUpdate;
+  }
+
+  // updating current month when current date changes
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.current !== nextProps.current) {
+      this.updateMonth(parseDate(nextProps.current));
+    }
   }
 
   updateMonth(day, doNotTriggerListeners) {
@@ -344,6 +353,7 @@ class Calendar extends Component {
     const shouldShowSixWeeks = showSixWeeks && !hideExtraDays;
     const days = dateutils.page(currentMonth, firstDay, shouldShowSixWeeks);
 
+    console.log('HDV current: ', this.props.current, currentMonth);
     const weeks = [];
     while (days.length) {
       weeks.push(this.renderWeek(days.splice(0, 7), weeks.length));
@@ -363,7 +373,11 @@ class Calendar extends Component {
     const gestureProps = enableSwipeMonths ? {onSwipe: (direction, state) => this.onSwipe(direction, state)} : {};
 
     return (
-      <GestureComponent {...gestureProps}>
+      <GestureComponent {...gestureProps}
+        config={{
+          velocityThreshold: 0.1,
+        }}
+      >
         <View
           style={[this.style.container, this.props.style]}
           accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
@@ -391,6 +405,7 @@ class Calendar extends Component {
             disableArrowRight={this.props.disableArrowRight}
             disabledDaysIndexes={this.props.disabledDaysIndexes}
             renderHeader={this.props.renderHeader}
+            renderTopHeader={this.props.renderTopHeader}
           />
           <View style={this.style.monthView}>{weeks}</View>
         </View>

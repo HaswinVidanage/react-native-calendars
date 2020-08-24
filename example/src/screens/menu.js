@@ -51,6 +51,12 @@ export default class MenuScreen extends Component {
             onPress={this.onWeekPress.bind(this)}>
             <Text style={styles.menuText}>Week Calendar</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+              testID={testIDs.menu.WEEK_CALENDAR}
+              style={styles.menu}
+              onPress={this.onPickerScreenPress.bind(this)}>
+            <Text style={styles.menuText}>Picker</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );
@@ -103,6 +109,10 @@ export default class MenuScreen extends Component {
 
   onWeekPress() {
     this.pushScreen('ExpandableCalendar', {weekView: true});
+  }
+
+  onPickerScreenPress() {
+    this.pushScreen('PickerScreen', {weekView: true});
   }
 }
 
