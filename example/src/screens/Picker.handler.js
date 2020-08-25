@@ -9,16 +9,22 @@ const PickerHandler = props => {
 	const flatListRef = useRef();
 	const [currentPage, setCurrentPage] = useState(0);
 	const [selected, setSelected] = useState('');
-	const [currentDate] = useState(moment().format('YYYY-MM-DD'));
+	const [currentDate,  setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
 	const [rows, setRows] = useState([]);
-
+	const [yearList, setYearList] = useState([]);
+	const [selectedYear, setSelectedYear] = useState(moment().format('YYYY'));
 	useEffect(() => {
 		getInitialRows();
-	}, []);
+		populateYears();
+	}, [currentDate]);
+
+	useEffect(() => {
+		console.log('HDV currentPage changed: ', currentPage);
+	}, [currentPage]);
 
 	useEffect(() => {
 		// set current current page based on the current date.
-		// todo make it faster\
+		// todo make it faster
 		//  use obj instead of array https://stackoverflow.com/a/54143895/3418572
 		setCurrentPage(getInitialScrollIndex())
 	}, [rows]);
@@ -50,25 +56,38 @@ const PickerHandler = props => {
 		setIsYearSelectionVisible(!isYearSelectionVisible)
 	};
 
+	const populateYears = () => {
+		const yearRange = 15;
+
+		const yearArr = [];
+		const initYear = moment(currentDate).subtract(Math.floor(yearRange/2) , 'years');
+		for(let i=0; i < yearRange; i++) {
+			const year = initYear.clone().add(i, 'years').format('YYYY');
+			yearArr.push(year)
+		}
+		setYearList(yearArr);
+	};
+
+	const handleYearPress = (index) => {
+		setSelectedYear(yearList[index]);
+		setIsYearSelectionVisible(false);
+		updateCurrentMonthDate(yearList[index]);
+	};
+
+	const updateCurrentMonthDate = (year) => {
+		const date = moment(rows[currentPage]).year(year).format('YYYY-MM-DD');
+		setCurrentDate(date);
+		scrollToDate(date);
+		console.log('HDV getMonthDateOnView: ', date);
+	};
+
 	const getInitialRows = () => {
 		const rows = [];
-		const texts = [];
-		const date = parseDate(currentDate);
-		const currentDateKey = moment(currentDate).format('YYYY-MM-01');
-		let pastScrollRange = props.pastScrollRange;
-		let forwardPointer=0;
-		for(let i= 0; i <= (props.pastScrollRange + props.futureScrollRange); i ++) {
-			if (pastScrollRange !== 0) {
-				rows.push(moment(currentDateKey).subtract(pastScrollRange, 'months').format('YYYY-MM-DD'));
-				pastScrollRange--;
-				continue;
-			}
-
-			rows.push(moment(currentDateKey).add(forwardPointer, 'months').format('YYYY-MM-DD'));
-			forwardPointer++;
+		const initDate = moment(currentDate).subtract(props.pastScrollRange , 'months');
+		for(let i=0; i < (props.pastScrollRange + props.futureScrollRange + 1 ); i++) {
+			const date = moment(initDate.clone()).add(i, "month").format('YYYY-MM-01');
+			rows.push(date);
 		}
-
-		// console.log('HDV rows: ', rows);
 		setRows(rows);
 		scrollToDate(moment().format('YYYY-MM-01'));
 	};
@@ -96,7 +115,7 @@ const PickerHandler = props => {
 
 		// Divide the horizontal offset by the width of the view to see which page is visible
 		let pageNum = Math.floor(contentOffset.x / viewSize.width);
-		console.log('hdv scrolled to page ', pageNum);
+		console.log('HDV currentPage changed (onMomentumScrollEnd): ', pageNum);
 		setCurrentPage(pageNum);
 	};
 
@@ -106,6 +125,7 @@ const PickerHandler = props => {
 		if (indexForCurrentMonth === -1) {
 			return -1;
 		}
+		console.log('HDV currentPage changed (getInitialScrollIndex): ', indexForCurrentMonth);
 		return indexForCurrentMonth;
 	};
 
@@ -123,7 +143,10 @@ const PickerHandler = props => {
 		flatListRef,
 		scrollToDate,
 		onMomentumScrollEnd,
-		getInitialScrollIndex
+		getInitialScrollIndex,
+		yearList,
+		selectedYear,
+		handleYearPress
 	};
 };
 

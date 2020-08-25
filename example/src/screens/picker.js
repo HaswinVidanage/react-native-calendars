@@ -123,6 +123,25 @@ const MonthPaginationButtonForward = styled.TouchableOpacity`
     flex:1
 `;
 
+const YearGrid = styled.View`
+	flex: 1;
+	margin: 24px;
+	backgroundColor: green;
+`;
+
+const YearRow = styled.View`
+	flex: 1;
+	flexDirection: row;
+`;
+
+const YearButton = styled.TouchableOpacity`
+	flex: 1;
+	alignItems: center;
+	justifyContent: center;
+	backgroundColor: purple;
+	paddingRight: 4px;
+	paddingLeft: 4px; 
+`;
 const FlexViewRed = styled.View`
 	flex: 1;
 	backgroundColor: red;
@@ -156,7 +175,10 @@ const PickerScreen = (props) => {
         flatListRef,
         scrollToDate,
         onMomentumScrollEnd,
-        getInitialScrollIndex
+        getInitialScrollIndex,
+        yearList,
+        handleYearPress,
+        selectedYear
     } = PickerHandler(props);
 
 
@@ -529,9 +551,41 @@ const PickerScreen = (props) => {
         };
     };
 
+    const yearButton = (idx) => {
+        return (
+            <YearButton onPress={() => handleYearPress(idx)} style={yearList[idx] === selectedYear ? {backgroundColor: 'gold'} : {}}>
+                <Text>
+                    {yearList[idx]}
+                </Text>
+            </YearButton>
+        );
+    };
+
+    const yearSelectionContainer = () => {
+      const table = [];
+      let idx=0;
+      for (let i=0; i< 5; i++) {
+          let children = [];
+          for (let j=0; j< 3; j++, idx ++) {
+              console.log('HDV yearList[idx]: ', yearList[idx]);
+              const  yearBtn = yearButton(idx);
+              children.push(
+                  yearBtn
+              );
+          }
+          table.push(<YearRow>{children}</YearRow>)
+      }
+
+      return (
+          <YearGrid>
+              {table}
+          </YearGrid>
+      );
+    };
+
     const renderCalendarSlider = () => {
         if (isYearSelectionVisible) {
-            return;
+            return yearSelectionContainer()
         }
 
         return (
@@ -637,8 +691,8 @@ const PickerScreen = (props) => {
 };
 
 PickerScreen.defaultProps = {
-    pastScrollRange: 24,
-    futureScrollRange: 24,
+    pastScrollRange: 2,
+    futureScrollRange: 2,
     calendarWidth: 328,
     removeClippedSubviews: Platform.OS === 'android',
 };
