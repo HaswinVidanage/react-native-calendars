@@ -1,8 +1,13 @@
 import React, { Fragment} from 'react';
-import {StyleSheet, View, ScrollView, Text, TouchableHighlight,
+import {
+    StyleSheet,
+    View,
+    Text,
+    TouchableHighlight,
     TouchableOpacity,
     Modal,
-    FlatList
+    FlatList,
+    Platform
 } from 'react-native';
 // import {Calendar} from 'react-native-calendars';
 import Calendar from '../../../src/calendar/index'
@@ -517,13 +522,18 @@ const PickerScreen = (props) => {
     };
 
 
+    const getItemLayout = (data, index) => {
+        return {
+            length: props.calendarWidth,
+            offset: (props.calendarWidth) * index, index
+        };
+    };
 
     const renderCalendarSlider = () => {
         if (isYearSelectionVisible) {
             return;
         }
 
-        console.log('HDV init size : ', props.pastScrollRange + props.futureScrollRange);
         return (
             <FlatList
                 horizontal
@@ -537,9 +547,12 @@ const PickerScreen = (props) => {
                 onMomentumScrollEnd={onMomentumScrollEnd}
                 initialListSize={props.pastScrollRange + props.futureScrollRange}
                 keyExtractor={(item, index) => String(item)}
+                removeClippedSubviews={props.removeClippedSubviews}
+                getItemLayout={getItemLayout}
             />
         );
     };
+
     return (
         <View style={{flex:1 , justifyContent: 'center'}}>
             <TouchableOpacity onPress={() => handlePickerVisibility(true)}>
@@ -624,9 +637,10 @@ const PickerScreen = (props) => {
 };
 
 PickerScreen.defaultProps = {
-    pastScrollRange: 2,
-    futureScrollRange: 2,
-    calendarWidth: 328
+    pastScrollRange: 24,
+    futureScrollRange: 24,
+    calendarWidth: 328,
+    removeClippedSubviews: Platform.OS === 'android',
 };
 
 export default PickerScreen;

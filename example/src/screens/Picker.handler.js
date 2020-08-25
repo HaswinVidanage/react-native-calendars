@@ -18,6 +18,8 @@ const PickerHandler = props => {
 
 	useEffect(() => {
 		// set current current page based on the current date.
+		// todo make it faster\
+		//  use obj instead of array https://stackoverflow.com/a/54143895/3418572
 		setCurrentPage(getInitialScrollIndex())
 	}, [rows]);
 
