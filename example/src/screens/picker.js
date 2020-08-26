@@ -197,7 +197,8 @@ const PickerScreen = (props) => {
         handlePickerVisibility,
         isPickerVisible,
         onDayPress,
-        selected,
+        selectedDay,
+        selectedDateRange,
         onMonthChangeForward,
         onMonthChangeBackward,
         currentDate,
@@ -343,21 +344,93 @@ const PickerScreen = (props) => {
                         renderTopHeader={false}
                         testID={testIDs.calendars.FIRST}
                         current={item}
+                        disableMonthChange
                         style={styles.calendar}
                         hideExtraDays
                         onDayPress={onDayPress}
-                        markedDates={{
-                            [selected.dateString]: {
-                                selected: true,
-                                disableTouchEvent: true,
-                                selectedColor: 'orange',
-                                selectedTextColor: 'red'
-                            }
-                        }}
+                        markingType={'period'}
+                        markedDates={getMarkedDates()}
                     />
                 </CalendarContentWrapper>
             </View>
         );
+    };
+
+    const getDateRange = (date1, date2) => {
+        const dates = [];
+        // assign first date
+        let date = moment(date1.dateString);
+        dates[0] = date1.dateString;
+        while (date.isBefore(date2.dateString)) {
+            date = date.add(1, 'days');
+            dates.push(date.clone().format('YYYY-MM-DD'));
+        }
+
+        return dates;
+    };
+
+    const getMarkedDatesFromRange = (date1, date2) => {
+        const dateRange = getDateRange(date1, date2);
+        let markedDates = {};
+        if (dateRange.length === 0) {
+            return markedDates;
+        }
+
+        for (let i=0; i < dateRange.length; i ++ ) {
+            if (i === 0) {
+                markedDates[dateRange[0]]={startingDay: true, color: '#50cebb', textColor: 'white'};
+                continue;
+            }
+            if (i === dateRange.length - 1) {
+                markedDates[dateRange[i]]={endingDay: true, color: '#50cebb', textColor: 'white'};
+                continue;
+            }
+            markedDates[dateRange[i]]={color: '#70d7c7', textColor: 'white'};
+        }
+
+        return markedDates;
+    };
+
+    const getMarkedDates = () => {
+
+        if (props.isMultiSelect) {
+            if (selectedDateRange.length === 0) {
+                return {
+                    [selectedDay.dateString]: {textColor: 'green'},
+
+                    '2020-08-21': {startingDay: true, color: '#50cebb', textColor: 'white'},
+                    '2020-08-22': {color: '#70d7c7', textColor: 'white'},
+                    '2020-08-23': {color: '#70d7c7', textColor: 'white', marked: true, dotColor: 'white'},
+                    '2020-08-24': {color: '#70d7c7', textColor: 'white'},
+                    '2020-08-25': {endingDay: true, color: '#50cebb', textColor: 'white'},
+                }
+            }
+
+            if (selectedDateRange.length === 1) {
+                return {
+                    [selectedDateRange[0].dateString]: {textColor: 'green'},
+                }
+            }
+
+            if (selectedDateRange.length === 2) {
+                console.log('HDV date 1: ', selectedDateRange[0].dateString);
+                console.log('HDV date 2: ', selectedDateRange[1].dateString);
+                const markedDatesForRange = getMarkedDatesFromRange(selectedDateRange[0], selectedDateRange[1]);
+                console.log('HDV markedDatesForRange : ', markedDatesForRange);
+                return markedDatesForRange;
+            }
+        }
+
+        return {
+            // [selectedDay.dateString]: {
+            //     selected: true,
+            //     disableTouchEvent: true,
+            //     selectedColor: 'orange',
+            //     selectedTextColor: 'red'
+            // },
+
+            [selectedDay.dateString]: {textColor: 'green'},
+        };
     };
 
     const renderCalendarWithWeekNumbers = () => {
@@ -764,7 +837,7 @@ const PickerScreen = (props) => {
                                 </PickerTitleWrapper>
                                 <SelectedDateWrapper>
                                     <SelectedDateText>
-                                        {moment(selected.dateString).format('ddd')}, {moment(selected.dateString).format('MMM')} {moment(selected.dateString).format('DD')}
+                                        {moment(selectedDay.dateString).format('ddd')}, {moment(selectedDay.dateString).format('MMM')} {moment(selectedDay.dateString).format('DD')}
                                     </SelectedDateText>
                                 </SelectedDateWrapper>
                             </PickerTitle>
@@ -801,6 +874,7 @@ PickerScreen.defaultProps = {
     futureScrollRange: 24,
     calendarWidth: 328,
     removeClippedSubviews: Platform.OS === 'android',
+    isMultiSelect: true,
 };
 
 export default PickerScreen;

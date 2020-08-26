@@ -8,7 +8,7 @@ const PickerHandler = props => {
 	const [isPickerVisible, setIsPickerVisible] = useState(false);
 	const flatListRef = useRef();
 	const [currentPage, setCurrentPage] = useState(0);
-	const [selected, setSelected] = useState('');
+	const [selectedDay, setSelectedDay] = useState('');
 	const [currentDate,  setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
 	const [rows, setRows] = useState([]);
 	const [yearList, setYearList] = useState([]);
@@ -51,12 +51,40 @@ const PickerHandler = props => {
 		setIsPickerVisible(isVisible)
 	};
 
+	const [selectedDateRange, setSelectedDateRange] =  useState([]);
 
 	const onDayPress = (day) => {
-		setSelected(day);
+		const isMultiSelect = props.isMultiSelect;
+		if (isMultiSelect) {
+			let dates = [];
+			if (selectedDateRange.length < 2) {
+				console.log('HDV date01: ', selectedDateRange);
+				dates = selectedDateRange;
+			}
+			dates.push(day);
+
+			if (dates.length === 2) {
+				// check if from date is before to date, else do the switch
+				const date1 = dates[0];
+				const date2 = dates[1];
+				const swappedDateRange = [];
+				if (moment(date1.dateString).isAfter(date2.dateString)) {
+					swappedDateRange[0] = date2;
+					swappedDateRange[1] = date1;
+					setSelectedDateRange(swappedDateRange);
+					return;
+				}
+			}
+
+			setSelectedDateRange(dates);
+		}
+		setSelectedDay(day);
 	};
 
 
+	useEffect(() => {
+		console.log('HDV selectedDateRange: ', selectedDateRange)
+	}, [selectedDateRange.length]);
 
 	const onMonthChangeForward = () => {
 		scrollToIndex(currentPage + 1);
@@ -160,7 +188,8 @@ const PickerHandler = props => {
 		handlePickerVisibility,
 		isPickerVisible,
 		onDayPress,
-		selected,
+		selectedDay,
+		selectedDateRange,
 		onMonthChangeForward,
 		onMonthChangeBackward,
 		currentDate,
@@ -176,7 +205,7 @@ const PickerHandler = props => {
 		handleYearPress,
 		onViewRef,
 		viewConfigRef,
-		currentPage
+		currentPage,
 	};
 };
 
