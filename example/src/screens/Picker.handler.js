@@ -79,7 +79,7 @@ const PickerHandler = props => {
 		const yearRange = 15;
 
 		const yearArr = [];
-		const initYear = moment(currentDate).subtract(Math.floor(yearRange/2) , 'years');
+		const initYear = moment().subtract(Math.floor(yearRange/2) , 'years');
 		for(let i=0; i < yearRange; i++) {
 			const year = initYear.clone().add(i, 'years').format('YYYY');
 			yearArr.push(year)

@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     Modal,
     FlatList,
-    Platform
+    Platform,
+    Image
 } from 'react-native';
 // import {Calendar} from 'react-native-calendars';
 import Calendar from '../../../src/calendar/index'
@@ -27,11 +28,10 @@ const PickerModal = styled.View`
 	justifyContent: center;
 	alignItems: center;
 	marginTop: 22px;
-	backgroundColor: purple
+	backgroundColor: white
 `;
 
 const ModalView = styled.View`
-	backgroundColor: red;
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
 	borderRadius: 5px;
 	margin: 20px;
@@ -84,8 +84,7 @@ const PickerTopMenu = styled.View`
 `;
 
 const PickerContent = styled.View`
-	backgroundColor: yellow;
-	height:310px;
+	height:366px;
 `;
 
 const PickerBottomMenu = styled.View`
@@ -102,12 +101,10 @@ const PickerTopMenuWrapper = styled.View`
 
 const YearSelector = styled.View`
 	flex: 1;
-	backgroundColor: green;
 `;
 
 const MonthPagination = styled.View`
 	flex: 1;
-	backgroundColor: yellow;
 	flexDirection: row;
 `;
 
@@ -116,17 +113,23 @@ const YearChangeButton = styled.TouchableOpacity`
 `;
 
 const MonthPaginationButtonBack = styled.TouchableOpacity`
-    flex:1
+    flex:1;
+    alignItems: center;
+	justifyContent: center;
 `;
 
 const MonthPaginationButtonForward = styled.TouchableOpacity`
-    flex:1
+    flex:1;
+    alignItems: center;
+	justifyContent: center;
+`;
+
+const DropDownArrow = styled.TouchableOpacity`
+    padding: 10px;
 `;
 
 const YearGrid = styled.View`
 	flex: 1;
-	margin: 24px;
-	backgroundColor: green;
 `;
 
 const YearRow = styled.View`
@@ -138,10 +141,39 @@ const YearButton = styled.TouchableOpacity`
 	flex: 1;
 	alignItems: center;
 	justifyContent: center;
-	backgroundColor: purple;
+	backgroundColor: white;
 	paddingRight: 4px;
 	paddingLeft: 4px; 
 `;
+
+const YearLabelWrapper = styled.View`
+	flex: 1;
+	alignItems: center;
+	flexDirection: row;
+`;
+
+const FooterBottom = styled.View`
+	flex: 1;
+	flexDirection: row;
+`;
+
+const FooterEmptyFlex = styled.View`
+	flex: 1;
+`;
+
+const FooterButtonGrid = styled.View`
+    flex: 1;
+    flexDirection: row;
+    justify-content: flex-end;
+`;
+
+const FooterButton = styled.TouchableOpacity`
+    alignItems: center;
+	justifyContent: center;
+	width: 80;
+`;
+
+
 const FlexViewRed = styled.View`
 	flex: 1;
 	backgroundColor: red;
@@ -155,7 +187,6 @@ const FlexViewYellow = styled.View`
 const CalendarContentWrapper = styled.View`
 	flex: 1;
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
-	backgroundColor: green;
 `;
 
 
@@ -214,28 +245,118 @@ const PickerScreen = (props) => {
         );
     };
     const renderCalendarWithSelectableDate = ({item}) => {
-        console.log('HDV row: ', item);
+        const currentYear =  moment(item).format('YYYY');
+        const currentMonth = moment(item).format('MMMM');
+        let leftArrow = <View/>;
+        let rightArrow = <View/>;
+        let upArrow = <View/>;
+        let downArrow = <View/>;
+
+        leftArrow = (
+            <MonthPaginationButtonBack
+                onPress={onMonthChangeBackward}
+                style={{
+                    padding: 10,
+                }}
+                hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
+            >
+                {props.renderArrow
+                    ? props.renderArrow('left')
+                    : <Image
+                        source={require('../../../src/calendar/img/previous.png')}
+                        style={{
+                            tintColor: '#00BBF2'
+                        }}
+                    />}
+            </MonthPaginationButtonBack>
+        );
+        rightArrow = (
+            <MonthPaginationButtonForward
+                onPress={onMonthChangeForward}
+                style={{
+                    padding: 10,
+                }}
+                hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
+            >
+                {props.renderArrow
+                    ? props.renderArrow('right')
+                    : <Image
+                        source={require('../../../src/calendar/img/next.png')}
+                        style={{
+                            tintColor: '#00BBF2'
+                        }}
+                    />}
+            </MonthPaginationButtonForward>
+        );
+
+        upArrow = (
+            <DropDownArrow>
+                {props.renderDropDownArrow
+                    ? props.renderDropDownArrow('up')
+                    : <Image
+                        source={require('../../../src/img/up.png')}
+                        style={{
+                            tintColor: '#00BBF2'
+                        }}
+                    />}
+            </DropDownArrow>
+        );
+
+        downArrow = (
+            <DropDownArrow>
+                {props.renderDropDownArrow
+                    ? props.renderDropDownArrow('down')
+                    : <Image
+                        source={require('../../../src/img/down.png')}
+                        style={{
+                            tintColor: '#00BBF2'
+                        }}
+                    />}
+            </DropDownArrow>
+        );
         return (
-            <CalendarContentWrapper>
-                <Calendar
-                    onMonthChange={(date) => console.log('hdv onMonthChange', date)}
-                    // renderTopHeader={false}
-                    testID={testIDs.calendars.FIRST}
-                    current={item}
-                    style={styles.calendar}
-                    hideExtraDays
-                    // enableSwipeMonths={true}
-                    onDayPress={onDayPress}
-                    markedDates={{
-                        [selected.dateString]: {
-                            selected: true,
-                            disableTouchEvent: true,
-                            selectedColor: 'orange',
-                            selectedTextColor: 'red'
-                        }
-                    }}
-                />
-            </CalendarContentWrapper>
+
+            <View>
+                <PickerTopMenu>
+                    <PickerTopMenuWrapper>
+                        <YearSelector>
+                            <YearChangeButton onPress={()=> toggleYearSelection()}>
+                                <YearLabelWrapper>
+                                    <Text>
+                                        {`${currentMonth} ${currentYear}` }
+                                    </Text>
+
+                                    {downArrow}
+                                </YearLabelWrapper>
+                            </YearChangeButton>
+                        </YearSelector>
+                        <MonthPagination>
+                            {leftArrow}
+                            {rightArrow}
+                        </MonthPagination>
+                    </PickerTopMenuWrapper>
+                </PickerTopMenu>
+                <CalendarContentWrapper>
+                    <Calendar
+                        onMonthChange={(date) => console.log('hdv onMonthChange', date)}
+                        // renderTopHeader={false}
+                        testID={testIDs.calendars.FIRST}
+                        current={item}
+                        style={styles.calendar}
+                        hideExtraDays
+                        // enableSwipeMonths={true}
+                        onDayPress={onDayPress}
+                        markedDates={{
+                            [selected.dateString]: {
+                                selected: true,
+                                disableTouchEvent: true,
+                                selectedColor: 'orange',
+                                selectedTextColor: 'red'
+                            }
+                        }}
+                    />
+                </CalendarContentWrapper>
+            </View>
         );
     };
 
@@ -594,6 +715,7 @@ const PickerScreen = (props) => {
         return (
             <FlatList
                 horizontal
+                showsHorizontalScrollIndicator={false}
                 data={rows}
                 renderItem={renderCalendarWithSelectableDate}
                 pageSize={1}
@@ -612,7 +734,7 @@ const PickerScreen = (props) => {
                     selectedYear,
                     currentDate
                 }}
-                maxToRenderPerBatch={1}
+                maxToRenderPerBatch={3}
                 updateCellsBatchingPeriod={10}
                 initialNumToRender={3}
                 windowSize={1}
@@ -647,53 +769,24 @@ const PickerScreen = (props) => {
                                 </SelectedDateWrapper>
                             </PickerTitle>
                         </PickerHeader>
-                        <PickerTopMenu>
-                            <PickerTopMenuWrapper>
-                                <YearSelector>
-                                    <YearChangeButton onPress={()=> toggleYearSelection()}>
-                                        <FlexViewYellow/>
-                                    </YearChangeButton>
-                                </YearSelector>
-                                <MonthPagination>
-                                    <MonthPaginationButtonBack onPress={()=> onMonthChangeBackward()}>
-                                        <FlexViewRed/>
-                                    </MonthPaginationButtonBack>
-
-                                    <MonthPaginationButtonForward onPress={()=> onMonthChangeForward()}>
-                                        <FlexViewYellow/>
-                                    </MonthPaginationButtonForward>
-                                </MonthPagination>
-                            </PickerTopMenuWrapper>
-                        </PickerTopMenu>
                         <PickerContent>
                             {renderCalendarSlider()}
                         </PickerContent>
                         <PickerBottomMenu>
-                            <TouchableHighlight
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {
-                                    // onMonthChange();
-                                    handlePickerVisibility(false);
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {
-                                    onMonthChangeBackward()
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Back</Text>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {
-                                    onMonthChangeForward()
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Forward</Text>
-                            </TouchableHighlight>
+                            <FooterBottom>
+                                <FooterButtonGrid>
+                                    <FooterButton onPress={() => handlePickerVisibility(false)}>
+                                        <Text style={{color: '#F9A350'}}>
+                                            CANCEL
+                                        </Text>
+                                    </FooterButton>
+                                    <FooterButton>
+                                        <Text style={{color: '#F9A350'}}>
+                                            OK
+                                        </Text>
+                                    </FooterButton>
+                                </FooterButtonGrid>
+                            </FooterBottom>
                         </PickerBottomMenu>
                     </ModalView>
                 </PickerModal>
