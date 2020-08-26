@@ -186,6 +186,7 @@ const FlexViewYellow = styled.View`
 
 const CalendarContentWrapper = styled.View`
 	flex: 1;
+	backgroundColor: white;
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
 `;
 
@@ -339,12 +340,11 @@ const PickerScreen = (props) => {
                 <CalendarContentWrapper>
                     <Calendar
                         onMonthChange={(date) => console.log('hdv onMonthChange', date)}
-                        // renderTopHeader={false}
+                        renderTopHeader={false}
                         testID={testIDs.calendars.FIRST}
                         current={item}
                         style={styles.calendar}
                         hideExtraDays
-                        // enableSwipeMonths={true}
                         onDayPress={onDayPress}
                         markedDates={{
                             [selected.dateString]: {
