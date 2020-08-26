@@ -178,7 +178,10 @@ const PickerScreen = (props) => {
         getInitialScrollIndex,
         yearList,
         handleYearPress,
-        selectedYear
+        selectedYear,
+        onViewRef,
+        viewConfigRef,
+        currentPage
     } = PickerHandler(props);
 
 
@@ -602,7 +605,17 @@ const PickerScreen = (props) => {
                 initialListSize={props.pastScrollRange + props.futureScrollRange}
                 keyExtractor={(item, index) => String(item)}
                 removeClippedSubviews={props.removeClippedSubviews}
+                viewabilityConfig={viewConfigRef.current}
+                onViewableItemsChanged={onViewRef.current}
                 getItemLayout={getItemLayout}
+                extraData={{
+                    selectedYear,
+                    currentDate
+                }}
+                maxToRenderPerBatch={1}
+                updateCellsBatchingPeriod={10}
+                initialNumToRender={3}
+                windowSize={1}
             />
         );
     };
@@ -691,8 +704,8 @@ const PickerScreen = (props) => {
 };
 
 PickerScreen.defaultProps = {
-    pastScrollRange: 2,
-    futureScrollRange: 2,
+    pastScrollRange: 24,
+    futureScrollRange: 24,
     calendarWidth: 328,
     removeClippedSubviews: Platform.OS === 'android',
 };

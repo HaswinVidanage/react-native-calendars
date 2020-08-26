@@ -13,10 +13,28 @@ const PickerHandler = props => {
 	const [rows, setRows] = useState([]);
 	const [yearList, setYearList] = useState([]);
 	const [selectedYear, setSelectedYear] = useState(moment().format('YYYY'));
+	const [yearChangePerformed, setYearChangePerformed] = useState(false);
+
+	const onViewRef = React.useRef(({ viewableItems, changed })=> {
+		console.log("HDV Visible 001", viewableItems[0]);
+		console.log("HDV Visible Changed in this iteration", changed);
+	});
+	const viewConfigRef = React.useRef({
+		waitForInteraction: false,
+		itemVisiblePercentThreshold: 100
+	});
+
 	useEffect(() => {
 		getInitialRows();
-		populateYears();
 	}, [currentDate]);
+
+	useEffect(() => {
+		populateYears();
+	}, []);
+
+	useEffect(() => {
+		console.log('HDV currentPage selectedYear changed', currentPage);
+	}, [selectedYear]);
 
 	useEffect(() => {
 		console.log('HDV currentPage changed: ', currentPage);
@@ -48,6 +66,7 @@ const PickerHandler = props => {
 		if (currentPage === 0) {
 			return;
 		}
+		console.log("HDV 001 on back: ", currentPage, rows[currentPage]);
 		scrollToIndex(currentPage - 1);
 	};
 
@@ -69,6 +88,9 @@ const PickerHandler = props => {
 	};
 
 	const handleYearPress = (index) => {
+		setYearChangePerformed(true);
+		// clear rows to fix blank issue.
+		setRows([]);
 		setSelectedYear(yearList[index]);
 		setIsYearSelectionVisible(false);
 		updateCurrentMonthDate(yearList[index]);
@@ -78,7 +100,6 @@ const PickerHandler = props => {
 		const date = moment(rows[currentPage]).year(year).format('YYYY-MM-DD');
 		setCurrentDate(date);
 		scrollToDate(date);
-		console.log('HDV getMonthDateOnView: ', date);
 	};
 
 	const getInitialRows = () => {
@@ -110,12 +131,18 @@ const PickerHandler = props => {
 
 
 	const onMomentumScrollEnd = (e) => {
+
+		// Idea is to stop onMomentumScrollEnd from triggering on year change. Since it will always return 0 as current page number
+		if (yearChangePerformed) {
+			setYearChangePerformed(false);
+			return;
+		}
+
 		let contentOffset = e.nativeEvent.contentOffset;
 		let viewSize = e.nativeEvent.layoutMeasurement;
 
 		// Divide the horizontal offset by the width of the view to see which page is visible
 		let pageNum = Math.floor(contentOffset.x / viewSize.width);
-		console.log('HDV currentPage changed (onMomentumScrollEnd): ', pageNum);
 		setCurrentPage(pageNum);
 	};
 
@@ -146,7 +173,10 @@ const PickerHandler = props => {
 		getInitialScrollIndex,
 		yearList,
 		selectedYear,
-		handleYearPress
+		handleYearPress,
+		onViewRef,
+		viewConfigRef,
+		currentPage
 	};
 };
 
