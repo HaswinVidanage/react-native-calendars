@@ -5,10 +5,9 @@ import dateutils from "../../../src/dateutils";
 
 const PickerHandler = props => {
 
-	const [isPickerVisible, setIsPickerVisible] = useState(false);
 	const flatListRef = useRef();
 	const [currentPage, setCurrentPage] = useState(0);
-	const [selectedDay, setSelectedDay] = useState('');
+	const [selectedDay, setSelectedDay] = useState({});
 	const [currentDate,  setCurrentDate] = useState(moment().format('YYYY-MM-DD'));
 	const [rows, setRows] = useState([]);
 	const [yearList, setYearList] = useState([]);
@@ -48,17 +47,19 @@ const PickerHandler = props => {
 	}, [rows]);
 
 	const handlePickerVisibility = (isVisible) => {
-		setIsPickerVisible(isVisible)
+		if (props.handlePickerVisibility) {
+			props.handlePickerVisibility(isVisible)
+		}
 	};
 
 	const [selectedDateRange, setSelectedDateRange] =  useState([]);
 
 	const onDayPress = (day) => {
+		// TODO : don't push if date is same in multiselect
 		const isMultiSelect = props.isMultiSelect;
 		if (isMultiSelect) {
 			let dates = [];
 			if (selectedDateRange.length < 2) {
-				console.log('HDV date01: ', selectedDateRange);
 				dates = selectedDateRange;
 			}
 			dates.push(day);
@@ -68,6 +69,8 @@ const PickerHandler = props => {
 				const date1 = dates[0];
 				const date2 = dates[1];
 				const swappedDateRange = [];
+
+
 				if (moment(date1.dateString).isAfter(date2.dateString)) {
 					swappedDateRange[0] = date2;
 					swappedDateRange[1] = date1;
@@ -116,8 +119,12 @@ const PickerHandler = props => {
 	};
 
 	const handleYearPress = (index) => {
+		if (yearList[index] === selectedYear) {
+			// return if the selected year is same as the currently selected year
+			setIsYearSelectionVisible(false);
+			return;
+		}
 		setYearChangePerformed(true);
-		// clear rows to fix blank issue.
 		setRows([]);
 		setSelectedYear(yearList[index]);
 		setIsYearSelectionVisible(false);
@@ -184,9 +191,30 @@ const PickerHandler = props => {
 		return indexForCurrentMonth;
 	};
 
+	const handleOkBtnPress = () => {
+		console.log('HDV Clicked!!!!');
+		if (props.isMultiSelect) {
+			console.log('HDV multi selectedDateRange: ', selectedDateRange);
+		}
+
+		console.log('HDV single selectedDay: ', selectedDay)
+	};
+
+	const [isOkButtonDisabled, setOkButtonDisabled] = useState(false);
+
+	useEffect(() => {
+		// conditions for ok button to be disabled.
+		// if isMultiSelect, selectedDateRange needs to be of length = 2
+		// selectedDay should not be null
+		const checkForMultiSelect = (props.isMultiSelect && selectedDateRange.length === 2);
+		const checkForSingleSelect = (!props.isMultiSelect && selectedDay);
+		const isDisabled = !(checkForMultiSelect || checkForSingleSelect);
+
+		setOkButtonDisabled(isDisabled);
+	}, [props.isMultiSelect, setSelectedDateRange, selectedDay]);
+
 	return {
 		handlePickerVisibility,
-		isPickerVisible,
 		onDayPress,
 		selectedDay,
 		selectedDateRange,
@@ -206,6 +234,8 @@ const PickerHandler = props => {
 		onViewRef,
 		viewConfigRef,
 		currentPage,
+		handleOkBtnPress,
+		isOkButtonDisabled
 	};
 };
 
