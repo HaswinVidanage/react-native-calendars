@@ -246,6 +246,7 @@ const PickerScreen = (props) => {
             />
         );
     };
+
     const renderCalendarWithSelectableDate = ({item}) => {
         const currentYear =  moment(item).format('YYYY');
         const currentMonth = moment(item).format('MMMM');
@@ -422,15 +423,58 @@ const PickerScreen = (props) => {
         }
 
         return {
-            // [selectedDay.dateString]: {
-            //     selected: true,
-            //     disableTouchEvent: true,
-            //     selectedColor: 'orange',
-            //     selectedTextColor: 'red'
-            // },
-
             [selectedDay.dateString]: {textColor: 'green'},
         };
+    };
+
+    const getSelectedDateTitle = () => {
+        if (props.isMultiSelect) {
+            if (selectedDateRange.length === 0){
+                return `${moment(selectedDay.dateString).format('MMM')} ${moment(selectedDay.dateString).format('DD')}`;
+            }
+
+            if (selectedDateRange.length === 1){
+                const date = selectedDateRange[0].dateString;
+                return `${moment(date).format('MMM')} ${moment(date).format('DD')}`;
+            }
+
+            if (selectedDateRange.length === 2){
+                const date1 = selectedDateRange[0].dateString;
+                const date2 = selectedDateRange[1].dateString;
+                const date1Str = `${moment(date1).format('MMM')} ${moment(date1).format('DD')}`;
+                const date2Str = `${moment(date2).format('MMM')} ${moment(date2).format('DD')}`;
+                return `${date1Str} - ${date2Str}`;
+            }
+        }
+
+        return `${moment(selectedDay.dateString).format('ddd')}, ${moment(selectedDay.dateString).format('MMM')} ${moment(selectedDay.dateString).format('DD')}`;
+    };
+
+    const getTitleHeaderText = () => {
+        if (props.isMultiSelect) {
+            return "Select Date Range"
+        }
+        return 'Select Date';
+    };
+
+    const renderStaticHeader = () => {
+
+        return (
+            <PickerHeader>
+                <PickerTitle>
+                    <PickerTitleWrapper>
+                        <PickerTitleText>
+                            {getTitleHeaderText()}
+                        </PickerTitleText>
+                    </PickerTitleWrapper>
+                    <SelectedDateWrapper>
+                        <SelectedDateText>
+                            {getSelectedDateTitle()}
+                        </SelectedDateText>
+                    </SelectedDateWrapper>
+                </PickerTitle>
+            </PickerHeader>
+        );
     };
 
     const renderCalendarWithWeekNumbers = () => {
@@ -830,18 +874,7 @@ const PickerScreen = (props) => {
             >
                 <PickerModal>
                     <ModalView>
-                        <PickerHeader>
-                            <PickerTitle>
-                                <PickerTitleWrapper>
-                                    <PickerTitleText>Select Date</PickerTitleText>
-                                </PickerTitleWrapper>
-                                <SelectedDateWrapper>
-                                    <SelectedDateText>
-                                        {moment(selectedDay.dateString).format('ddd')}, {moment(selectedDay.dateString).format('MMM')} {moment(selectedDay.dateString).format('DD')}
-                                    </SelectedDateText>
-                                </SelectedDateWrapper>
-                            </PickerTitle>
-                        </PickerHeader>
+                        {renderStaticHeader()}
                         <PickerContent>
                             {renderCalendarSlider()}
                         </PickerContent>
