@@ -239,8 +239,6 @@ const PickerScreen = (props) => {
         yearList,
         handleYearPress,
         selectedYear,
-        onViewRef,
-        viewConfigRef,
         currentPage,
 	    handleOkBtnPress,
 	    isOkButtonDisabled
@@ -342,7 +340,6 @@ const PickerScreen = (props) => {
                 </PickerTopMenu>
                 <CalendarContentWrapper>
                     <Calendar
-                        onMonthChange={(date) => console.log('hdv onMonthChange', date)}
                         renderTopHeader={false}
                         testID={testIDs.calendars.FIRST}
                         current={item}
@@ -583,8 +580,6 @@ const PickerScreen = (props) => {
                 initialListSize={props.pastScrollRange + props.futureScrollRange}
                 keyExtractor={(item, index) => String(item)}
                 removeClippedSubviews={props.removeClippedSubviews}
-                viewabilityConfig={viewConfigRef.current}
-                onViewableItemsChanged={onViewRef.current}
                 getItemLayout={getItemLayout}
                 extraData={{
                     selectedYear,
@@ -626,11 +621,13 @@ const PickerScreen = (props) => {
 PickerScreen.defaultProps = {
 	isPickerVisible: true,
 	handlePickerVisibility: (isVisible) => {console.log('HDV IsVisible: ', isVisible)},
+	onSelectedYearChanged: (selectedYear) => {},
+	onPageChange: () => {},
     pastScrollRange: 24,
     futureScrollRange: 24,
     calendarWidth: 328,
     removeClippedSubviews: Platform.OS === 'android',
-    isMultiSelect: false,
+    isMultiSelect: true,
 	primaryColor: '#F9A350',
 	disabledTextColor: '#808080',
 	cancelText: 'CANCEL',

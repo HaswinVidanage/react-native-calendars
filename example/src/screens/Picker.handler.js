@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import moment from 'moment';
-import {parseDate} from "../../../src/interface";
-import dateutils from "../../../src/dateutils";
 
 const PickerHandler = props => {
 
@@ -14,15 +12,6 @@ const PickerHandler = props => {
 	const [selectedYear, setSelectedYear] = useState(moment().format('YYYY'));
 	const [yearChangePerformed, setYearChangePerformed] = useState(false);
 
-	const onViewRef = React.useRef(({ viewableItems, changed })=> {
-		console.log("HDV Visible 001", viewableItems[0]);
-		console.log("HDV Visible Changed in this iteration", changed);
-	});
-	const viewConfigRef = React.useRef({
-		waitForInteraction: false,
-		itemVisiblePercentThreshold: 100
-	});
-
 	useEffect(() => {
 		getInitialRows();
 	}, [currentDate]);
@@ -32,11 +21,15 @@ const PickerHandler = props => {
 	}, []);
 
 	useEffect(() => {
-		console.log('HDV currentPage selectedYear changed', currentPage);
+		if(props.onSelectedYearChanged) {
+			props.onSelectedYearChanged(selectedYear);
+		}
 	}, [selectedYear]);
 
 	useEffect(() => {
-		console.log('HDV currentPage changed: ', currentPage);
+		if(props.onPageChange) {
+			props.onPageChange(currentPage);
+		}
 	}, [currentPage]);
 
 	useEffect(() => {
@@ -55,7 +48,6 @@ const PickerHandler = props => {
 	const [selectedDateRange, setSelectedDateRange] =  useState([]);
 
 	const onDayPress = (day) => {
-		// TODO : don't push if date is same in multiselect
 		const isMultiSelect = props.isMultiSelect;
 		if (isMultiSelect) {
 			let dates = [];
@@ -84,11 +76,6 @@ const PickerHandler = props => {
 		setSelectedDay(day);
 	};
 
-
-	useEffect(() => {
-		console.log('HDV selectedDateRange: ', selectedDateRange)
-	}, [selectedDateRange.length]);
-
 	const onMonthChangeForward = () => {
 		scrollToIndex(currentPage + 1);
 	};
@@ -97,7 +84,6 @@ const PickerHandler = props => {
 		if (currentPage === 0) {
 			return;
 		}
-		console.log("HDV 001 on back: ", currentPage, rows[currentPage]);
 		scrollToIndex(currentPage - 1);
 	};
 
@@ -120,12 +106,11 @@ const PickerHandler = props => {
 
 	const handleYearPress = (index) => {
 		if (yearList[index] === selectedYear) {
-			// return if the selected year is same as the currently selected year
 			setIsYearSelectionVisible(false);
 			return;
 		}
 		setYearChangePerformed(true);
-		setRows([]);
+		setRows([]); // reset flatlist to avoid flatlist from breaking
 		setSelectedYear(yearList[index]);
 		setIsYearSelectionVisible(false);
 		updateCurrentMonthDate(yearList[index]);
@@ -166,7 +151,6 @@ const PickerHandler = props => {
 
 
 	const onMomentumScrollEnd = (e) => {
-
 		// Idea is to stop onMomentumScrollEnd from triggering on year change. Since it will always return 0 as current page number
 		if (yearChangePerformed) {
 			setYearChangePerformed(false);
@@ -187,12 +171,10 @@ const PickerHandler = props => {
 		if (indexForCurrentMonth === -1) {
 			return -1;
 		}
-		console.log('HDV currentPage changed (getInitialScrollIndex): ', indexForCurrentMonth);
 		return indexForCurrentMonth;
 	};
 
 	const handleOkBtnPress = () => {
-		console.log('HDV Clicked!!!!');
 		if (props.isMultiSelect) {
 			console.log('HDV multi selectedDateRange: ', selectedDateRange);
 		}
@@ -208,10 +190,15 @@ const PickerHandler = props => {
 		// selectedDay should not be null
 		const checkForMultiSelect = (props.isMultiSelect && selectedDateRange.length === 2);
 		const checkForSingleSelect = (!props.isMultiSelect && selectedDay);
-		const isDisabled = !(checkForMultiSelect || checkForSingleSelect);
+
+		let isDisabled = !(checkForMultiSelect || checkForSingleSelect);
+
+		if (props.isMultiSelect) {
+			isDisabled = !(props.isMultiSelect && selectedDateRange.length === 2);
+		}
 
 		setOkButtonDisabled(isDisabled);
-	}, [props.isMultiSelect, setSelectedDateRange, selectedDay]);
+	}, [props.isMultiSelect, selectedDateRange, selectedDay]);
 
 	return {
 		handlePickerVisibility,
@@ -231,8 +218,6 @@ const PickerHandler = props => {
 		yearList,
 		selectedYear,
 		handleYearPress,
-		onViewRef,
-		viewConfigRef,
 		currentPage,
 		handleOkBtnPress,
 		isOkButtonDisabled
