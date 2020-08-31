@@ -11,6 +11,9 @@ const PickerHandler = props => {
 	const [yearList, setYearList] = useState([]);
 	const [selectedYear, setSelectedYear] = useState(moment().format('YYYY'));
 	const [yearChangePerformed, setYearChangePerformed] = useState(false);
+	const [selectedDateRange, setSelectedDateRange] =  useState([]);
+	const [isYearSelectionVisible, setIsYearSelectionVisible] = useState(false);
+	const [isOkButtonDisabled, setOkButtonDisabled] = useState(false);
 
 	useEffect(() => {
 		getInitialRows();
@@ -34,18 +37,24 @@ const PickerHandler = props => {
 
 	useEffect(() => {
 		// set current current page based on the current date.
-		// todo make it faster
-		//  use obj instead of array https://stackoverflow.com/a/54143895/3418572
 		setCurrentPage(getInitialScrollIndex())
 	}, [rows]);
 
-	const handlePickerVisibility = (isVisible) => {
-		if (props.handlePickerVisibility) {
-			props.handlePickerVisibility(isVisible)
-		}
-	};
+	useEffect(() => {
+		// conditions for ok button to be disabled.
+		// if isMultiSelect, selectedDateRange needs to be of length = 2
+		// selectedDay should not be null
+		const checkForMultiSelect = (props.isMultiSelect && selectedDateRange.length === 2);
+		const checkForSingleSelect = (!props.isMultiSelect && selectedDay);
 
-	const [selectedDateRange, setSelectedDateRange] =  useState([]);
+		let isDisabled = !(checkForMultiSelect || checkForSingleSelect);
+
+		if (props.isMultiSelect) {
+			isDisabled = !(props.isMultiSelect && selectedDateRange.length === 2);
+		}
+
+		setOkButtonDisabled(isDisabled);
+	}, [props.isMultiSelect, selectedDateRange, selectedDay]);
 
 	const onDayPress = (day) => {
 		const isMultiSelect = props.isMultiSelect;
@@ -74,22 +83,6 @@ const PickerHandler = props => {
 			setSelectedDateRange(dates);
 		}
 		setSelectedDay(day);
-	};
-
-	const onMonthChangeForward = () => {
-		scrollToIndex(currentPage + 1);
-	};
-
-	const onMonthChangeBackward = () => {
-		if (currentPage === 0) {
-			return;
-		}
-		scrollToIndex(currentPage - 1);
-	};
-
-	const [isYearSelectionVisible, setIsYearSelectionVisible] = useState(false);
-	const toggleYearSelection = () => {
-		setIsYearSelectionVisible(!isYearSelectionVisible)
 	};
 
 	const populateYears = () => {
@@ -148,8 +141,6 @@ const PickerHandler = props => {
 		flatListRef.current.scrollToIndex({ animated: true, index })
 	};
 
-
-
 	const onMomentumScrollEnd = (e) => {
 		// Idea is to stop onMomentumScrollEnd from triggering on year change. Since it will always return 0 as current page number
 		if (yearChangePerformed) {
@@ -175,38 +166,67 @@ const PickerHandler = props => {
 	};
 
 	const handleOkBtnPress = () => {
-		if (props.isMultiSelect) {
-			console.log('HDV multi selectedDateRange: ', selectedDateRange);
+		if (props.isMultiSelect && props.onOkBtnPress) {
+			props.onOkBtnPress({
+				selectedDay: null,
+				selectedDateRange
+			});
+			return;
 		}
 
-		console.log('HDV single selectedDay: ', selectedDay)
+		if (props.onOkBtnPress) {
+			props.onOkBtnPress({
+				selectedDay,
+				selectedDateRange: null
+			});
+		}
 	};
 
-	const [isOkButtonDisabled, setOkButtonDisabled] = useState(false);
-
-	useEffect(() => {
-		// conditions for ok button to be disabled.
-		// if isMultiSelect, selectedDateRange needs to be of length = 2
-		// selectedDay should not be null
-		const checkForMultiSelect = (props.isMultiSelect && selectedDateRange.length === 2);
-		const checkForSingleSelect = (!props.isMultiSelect && selectedDay);
-
-		let isDisabled = !(checkForMultiSelect || checkForSingleSelect);
-
-		if (props.isMultiSelect) {
-			isDisabled = !(props.isMultiSelect && selectedDateRange.length === 2);
+	const onCancelBtnPress = () => {
+		handlePickerVisibility(false);
+		if(props.onPickerClosed) {
+			props.onPickerClosed()
 		}
+	};
 
-		setOkButtonDisabled(isDisabled);
-	}, [props.isMultiSelect, selectedDateRange, selectedDay]);
+	const onMonthAdd = () => {
+		scrollToIndex(currentPage + 1);
+		if (props.onMonthChange){
+			props.onMonthChange(currentPage + 1)
+		}
+	};
+
+	const onMonthReduce = () => {
+		if (currentPage === 0) {
+			return;
+		}
+		scrollToIndex(currentPage - 1);
+
+		if (props.onMonthChange){
+			props.onMonthChange(currentPage - 1)
+		}
+	};
+
+	const toggleYearSelection = () => {
+		setIsYearSelectionVisible(!isYearSelectionVisible);
+		if(props.onYearSelectedToggled){
+			props.onYearSelectedToggled(!isYearSelectionVisible)
+		}
+	};
+
+	const handlePickerVisibility = (isVisible) => {
+		if (props.handlePickerVisibility) {
+			props.handlePickerVisibility(isVisible)
+		}
+	};
 
 	return {
 		handlePickerVisibility,
 		onDayPress,
 		selectedDay,
 		selectedDateRange,
-		onMonthChangeForward,
-		onMonthChangeBackward,
+		onMonthAdd,
+		onMonthReduce,
 		currentDate,
 		isYearSelectionVisible,
 		toggleYearSelection,
@@ -220,7 +240,8 @@ const PickerHandler = props => {
 		handleYearPress,
 		currentPage,
 		handleOkBtnPress,
-		isOkButtonDisabled
+		isOkButtonDisabled,
+		onCancelBtnPress,
 	};
 };
 

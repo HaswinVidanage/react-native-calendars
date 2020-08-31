@@ -226,8 +226,8 @@ const PickerScreen = (props) => {
         onDayPress,
         selectedDay,
         selectedDateRange,
-        onMonthChangeForward,
-        onMonthChangeBackward,
+        onMonthAdd,
+        onMonthReduce,
         currentDate,
         isYearSelectionVisible,
         toggleYearSelection,
@@ -241,7 +241,8 @@ const PickerScreen = (props) => {
         selectedYear,
         currentPage,
 	    handleOkBtnPress,
-	    isOkButtonDisabled
+	    isOkButtonDisabled,
+	    onCancelBtnPress,
     } = PickerHandler(props);
 
     const renderArrowButton = (type) => {
@@ -249,7 +250,7 @@ const PickerScreen = (props) => {
     	let onPress =  () => {};
     	switch (type) {
 		    case 'left': {
-			    onPress = onMonthChangeBackward;
+			    onPress = onMonthReduce;
 			    iconComponent = props.leftIcon
 				    ? props.leftIcon
 				    : <Image
@@ -261,7 +262,7 @@ const PickerScreen = (props) => {
 			    break;
 		    }
 		    case 'right': {
-			    onPress = onMonthChangeForward;
+			    onPress = onMonthAdd;
 			    iconComponent = props.rightIcon
 				    ? props.rightIcon
 				    : <Image
@@ -539,7 +540,7 @@ const PickerScreen = (props) => {
     	return (
 		    <FooterBottom>
 			    <FooterButtonGrid>
-				    <FooterButton onPress={() => handlePickerVisibility(false)}>
+				    <FooterButton onPress={() => onCancelBtnPress()}>
 					    <FooterText
 						    primaryColor={props.primaryColor}>
 						    {props.cancelText}
@@ -620,9 +621,13 @@ const PickerScreen = (props) => {
 
 PickerScreen.defaultProps = {
 	isPickerVisible: true,
-	handlePickerVisibility: (isVisible) => {console.log('HDV IsVisible: ', isVisible)},
+	handlePickerVisibility: (isVisible) => {},
 	onSelectedYearChanged: (selectedYear) => {},
+	onOkBtnPress: ({selectedDay, selectedDateRange}) => {},
 	onPageChange: () => {},
+	onPickerClosed: () => {},
+	onMonthChange: () => {},
+	onYearSelectedToggled: () => {},
     pastScrollRange: 24,
     futureScrollRange: 24,
     calendarWidth: 328,
