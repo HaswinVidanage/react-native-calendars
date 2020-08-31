@@ -1,9 +1,8 @@
-import React, { Fragment} from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
     Text,
-    TouchableOpacity,
     Modal,
     FlatList,
     Platform,
@@ -12,15 +11,9 @@ import {
 // import {Calendar} from 'react-native-calendars';
 import Calendar from '../../../src/calendar/index'
 import moment from 'moment';
-import _ from 'lodash';
 import styled from 'styled-components/native';
 import PickerHandler from "./Picker.handler";
-import {CalendarList} from 'react-native-calendars';
 const testIDs = require('../testIDs');
-
-const StyledText = styled.Text`
-  color:  red;
-`;
 
 const PickerModal = styled.View`
 	flex: 1;
@@ -112,13 +105,7 @@ const YearChangeButton = styled.TouchableOpacity`
     flex:1
 `;
 
-const MonthPaginationButtonBack = styled.TouchableOpacity`
-    flex:1;
-    alignItems: center;
-	justifyContent: center;
-`;
-
-const MonthPaginationButtonForward = styled.TouchableOpacity`
+const MonthPaginationButton = styled.TouchableOpacity`
     flex:1;
     alignItems: center;
 	justifyContent: center;
@@ -297,7 +284,7 @@ const PickerScreen = (props) => {
 	    }
 
 	    return (
-		    <MonthPaginationButtonBack
+		    <MonthPaginationButton
 			    onPress={onPress}
 			    style={{
 				    padding: 10,
@@ -305,14 +292,13 @@ const PickerScreen = (props) => {
 			    hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
 		    >
 			    {iconComponent}
-		    </MonthPaginationButtonBack>
+		    </MonthPaginationButton>
 	    );
     };
 
     const renderCalendarWithSelectableDate = ({item}) => {
         const currentYear =  moment(item).format('YYYY');
         const currentMonth = moment(item).format('MMMM');
-
         let leftArrow = renderArrowButton('left');
         let rightArrow = renderArrowButton('right');
         let downArrow = renderArrowButton('down');
