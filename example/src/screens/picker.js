@@ -31,6 +31,7 @@ export default class PickerScreen extends Component {
 	};
 
 	handleDateSelection = ({selectedDay, selectedDateRange}) => {
+		this.handlePickerVisibility(false);
 		console.log('Date selected: ', {selectedDay, selectedDateRange});
 	};
 

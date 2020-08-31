@@ -176,4 +176,5 @@ export const CalendarContentWrapper = styled.View`
 	flex: 1;
 	backgroundColor: white;
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
+	height: ${props => props.calendarHeight ? props.calendarHeight : '310px'} 
 `;

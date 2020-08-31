@@ -180,6 +180,7 @@ const PickerHandler = props => {
 				selectedDateRange: null
 			});
 		}
+		
 	};
 
 	const onCancelBtnPress = () => {

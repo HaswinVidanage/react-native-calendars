@@ -41,6 +41,7 @@ import moment from 'moment';import {
 } from './picker.style';
 
 import PickerHandler from "./picker.handler";
+import PropTypes from "prop-types";
 
 
 const Picker = (props) => {
@@ -79,7 +80,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('../calendar/img/previous.png')}
 					    style={{
-						    tintColor: '#00BBF2'
+						    tintColor: props.primaryColor
 					    }}
 				    />;
 			    break;
@@ -91,7 +92,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('../calendar/img/next.png')}
 					    style={{
-						    tintColor: '#00BBF2'
+						    tintColor: props.primaryColor
 					    }}
 				    />;
 			    break;
@@ -102,7 +103,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('../../src/img/down.png')}
 					    style={{
-						    tintColor: '#00BBF2'
+						    tintColor: props.primaryColor
 					    }}
 				    />;
 
@@ -388,7 +389,7 @@ const Picker = (props) => {
 
         return (
             <FlatList
-                horizontal
+                horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 data={rows}
                 renderItem={renderCalendarWithSelectableDate}
@@ -451,12 +452,50 @@ Picker.defaultProps = {
     pastScrollRange: 24,
     futureScrollRange: 24,
     calendarWidth: 328,
+	calendarHeight: 310,
     removeClippedSubviews: Platform.OS === 'android',
     isMultiSelect: true,
 	primaryColor: '#F9A350',
 	disabledTextColor: '#808080',
 	cancelText: 'CANCEL',
 	okText: 'OK'
+};
+
+Picker.propTypes = {
+	/** Boolean flag to open and close the picker **/
+	isPickerVisible: PropTypes.bool,
+	/** Boolean flag to toggle single date selection and multi date selection **/
+	isMultiSelect: PropTypes.bool,
+	/**  Callback to handle picker visibility **/
+	handlePickerVisibility: PropTypes.func,
+	/** Callback when year selection is changed **/
+	onSelectedYearChanged: PropTypes.func,
+	/** Callback when ok button is pressed **/
+	onOkBtnPress: PropTypes.func,
+	/** Callback when page is changed**/
+	onPageChange: PropTypes.func,
+	/** Callback on cancel button is clicked**/
+	onPickerClosed: PropTypes.func,
+	/** Callback on month changes**/
+	onMonthChange: PropTypes.func,
+	/** Callback on year selection is toggled **/
+	onYearSelectedToggled: PropTypes.func,
+	/** Max amount of months allowed to scroll to the past. Default = 24 */
+	pastScrollRange: PropTypes.number,
+	/** Max amount of months allowed to scroll to the future. Default = 24 */
+	futureScrollRange: PropTypes.number,
+	/** Used when calendar scroll is horizontal, default is device width, pagination should be disabled */
+	calendarWidth: PropTypes.number,
+	/** Dynamic calendar height */
+	calendarHeight: PropTypes.number,
+	/**  Primary color used for theme **/
+	primaryColor: PropTypes.string,
+	/**  Disabled text color **/
+	disabledTextColor: PropTypes.string,
+	/** Cancel button text **/
+	cancelText: PropTypes.string,
+	/** Ok button text **/
+	okText: PropTypes.string,
 };
 
 export default Picker;
