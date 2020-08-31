@@ -180,7 +180,7 @@ const PickerHandler = props => {
 				selectedDateRange: null
 			});
 		}
-		
+
 	};
 
 	const onCancelBtnPress = () => {
@@ -243,6 +243,7 @@ const PickerHandler = props => {
 		handleOkBtnPress,
 		isOkButtonDisabled,
 		onCancelBtnPress,
+		yearChangePerformed,
 	};
 };
 

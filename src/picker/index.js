@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import {
     StyleSheet,
     View,
@@ -6,7 +6,7 @@ import {
     Modal,
     FlatList,
     Platform,
-    Image
+    Image,
 } from 'react-native';
 import Calendar from '../calendar'
 import moment from 'moment';import {
@@ -37,7 +37,7 @@ import moment from 'moment';import {
 	YearTextWrapper,
 	FooterText,
 	YearText,
-	CalendarContentWrapper
+	CalendarContentWrapper,
 } from './picker.style';
 
 import PickerHandler from "./picker.handler";
@@ -67,6 +67,7 @@ const Picker = (props) => {
 	    handleOkBtnPress,
 	    isOkButtonDisabled,
 	    onCancelBtnPress,
+	    yearChangePerformed,
     } = PickerHandler(props);
 
     const renderArrowButton = (type) => {
@@ -132,6 +133,11 @@ const Picker = (props) => {
 		    </MonthPaginationButton>
 	    );
     };
+
+    const renderCalendarWithSelectableDateWithCallback = useCallback(
+	    (item) => renderCalendarWithSelectableDate(item),
+	    [selectedDay, selectedDateRange]
+    );
 
     const renderCalendarWithSelectableDate = ({item}) => {
         const currentYear =  moment(item).format('YYYY');
@@ -316,6 +322,11 @@ const Picker = (props) => {
         );
     };
 
+    const getItemLayoutWithCallback = useCallback(
+	    (data, index) => getItemLayout(data, index),
+	    []
+    );
+
     const getItemLayout = (data, index) => {
         return {
             length: props.calendarWidth,
@@ -387,13 +398,16 @@ const Picker = (props) => {
             return yearSelectionContainer()
         }
 
+        if (yearChangePerformed) {
+        	return;
+        }
+
         return (
             <FlatList
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 data={rows}
-                renderItem={renderCalendarWithSelectableDate}
-                pageSize={1}
+                renderItem={renderCalendarWithSelectableDateWithCallback}
                 initialScrollIndex={getInitialScrollIndex()}
                 pagingEnabled={true}
                 ref={flatListRef}
@@ -402,13 +416,14 @@ const Picker = (props) => {
                 initialListSize={props.pastScrollRange + props.futureScrollRange}
                 keyExtractor={(item, index) => String(item)}
                 removeClippedSubviews={props.removeClippedSubviews}
-                getItemLayout={getItemLayout}
+                getItemLayout={getItemLayoutWithCallback}
                 extraData={{
                     selectedYear,
                     currentDate
                 }}
+                pageSize={1}
                 maxToRenderPerBatch={3}
-                updateCellsBatchingPeriod={10}
+                updateCellsBatchingPeriod={50}
                 initialNumToRender={3}
                 windowSize={1}
             />
@@ -498,7 +513,11 @@ Picker.propTypes = {
 	okText: PropTypes.string,
 };
 
-export default Picker;
+const arePropsEqual = (prevProps, nextProps) => {
+	return prevProps === nextProps;
+};
+
+export default memo(Picker, arePropsEqual);
 
 const styles = StyleSheet.create({
     calendar: {
