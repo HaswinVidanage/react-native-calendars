@@ -1,6 +1,6 @@
 import styled from "styled-components/native/dist/styled-components.native.esm";
 
-const PickerModal = styled.View`
+export const PickerModal = styled.View`
 	flex: 1;
 	justifyContent: center;
 	alignItems: center;
@@ -8,7 +8,7 @@ const PickerModal = styled.View`
 	backgroundColor: white
 `;
 
-const ModalView = styled.View`
+export const ModalView = styled.View`
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
 	borderRadius: 5px;
 	margin: 20px;
@@ -20,14 +20,15 @@ const ModalView = styled.View`
 	shadowOpacity: 0.25;
 	shadowRadius: 3.84px;
 	elevation: 5;
+	backgroundColor: white;
 `;
 
-const PickerHeader = styled.View`
+export const PickerHeader = styled.View`
 	backgroundColor: #F9A350; 
 	height: 120px;
 `;
 
-const PickerTitle = styled.View`
+export const PickerTitle = styled.View`
 	flex: 1; 
 	marginLeft: 24px;
 	marginRight: 24px;
@@ -35,86 +36,80 @@ const PickerTitle = styled.View`
 	marginBottom: 16px;
 `;
 
-const PickerTitleWrapper= styled.View`
+export const PickerTitleWrapper= styled.View`
 	height: 20px;
 `;
 
-const PickerTitleText= styled.Text`
+export const PickerTitleText= styled.Text`
 	fontSize: 14;
 	color: #FFF;
 `;
 
-const SelectedDateWrapper = styled.View`
+export const SelectedDateWrapper = styled.View`
 	flex:1;
 	flexDirection: row;
 	alignItems: flex-end;
 `;
 
-const SelectedDateText = styled.Text`
+export const SelectedDateText = styled.Text`
 	fontSize: 32;
 	color: #FFF;
 `;
 
-const PickerTopMenu = styled.View`
+export const PickerTopMenu = styled.View`
 	backgroundColor: white; 
 	height: 56px;
 `;
 
-const PickerContent = styled.View`
+export const PickerContent = styled.View`
 	height:366px;
 `;
 
-const PickerBottomMenu = styled.View`
+export const PickerBottomMenu = styled.View`
 	backgroundColor: white; 
 	height: 56px;
 `;
 
-const PickerTopMenuWrapper = styled.View`
+export const PickerTopMenuWrapper = styled.View`
     flex:1;
 	flexDirection: row;
 	paddingLeft: 24px;
 	paddingRight: 24px;
 `;
 
-const YearSelector = styled.View`
+export const YearSelector = styled.View`
 	flex: 1;
 `;
 
-const MonthPagination = styled.View`
+export const MonthPagination = styled.View`
 	flex: 1;
 	flexDirection: row;
 `;
 
-const YearChangeButton = styled.TouchableOpacity`
+export const YearChangeButton = styled.TouchableOpacity`
     flex:1
 `;
 
-const MonthPaginationButtonBack = styled.TouchableOpacity`
+export const MonthPaginationButton = styled.TouchableOpacity`
     flex:1;
     alignItems: center;
 	justifyContent: center;
 `;
 
-const MonthPaginationButtonForward = styled.TouchableOpacity`
-    flex:1;
-    alignItems: center;
-	justifyContent: center;
-`;
-
-const DropDownArrow = styled.TouchableOpacity`
+export const DropDownArrow = styled.View`
     padding: 10px;
 `;
 
-const YearGrid = styled.View`
+export const YearGrid = styled.View`
 	flex: 1;
 `;
 
-const YearRow = styled.View`
+export const YearRow = styled.View`
 	flex: 1;
 	flexDirection: row;
 `;
 
-const YearButton = styled.TouchableOpacity`
+export const YearButton = styled.TouchableOpacity`
 	flex: 1;
 	alignItems: center;
 	justifyContent: center;
@@ -123,45 +118,61 @@ const YearButton = styled.TouchableOpacity`
 	paddingLeft: 4px; 
 `;
 
-const YearLabelWrapper = styled.View`
+export const YearLabelWrapper = styled.View`
 	flex: 1;
 	alignItems: center;
 	flexDirection: row;
 `;
 
-const FooterBottom = styled.View`
+export const FooterBottom = styled.View`
 	flex: 1;
 	flexDirection: row;
 `;
 
-const FooterEmptyFlex = styled.View`
-	flex: 1;
-`;
-
-const FooterButtonGrid = styled.View`
+export const FooterButtonGrid = styled.View`
     flex: 1;
     flexDirection: row;
     justify-content: flex-end;
 `;
 
-const FooterButton = styled.TouchableOpacity`
+export const FooterButton = styled.TouchableOpacity`
     alignItems: center;
 	justifyContent: center;
 	width: 80;
 `;
 
-
-const FlexViewRed = styled.View`
-	flex: 1;
-	backgroundColor: red;
+export const YearTextWrapper = styled.View`
+	backgroundColor: ${props => props.isSelected ? props.primaryColor : 'white'};
+	padding: 20px;
+	borderTopRightRadius: 20px;
+	borderTopLeftRadius: 20px;
+	borderBottomLeftRadius: 20px;
+	borderBottomRightRadius: 20px;
+	paddingTop: 10px;
+	paddingBottom: 10px;
 `;
 
-const FlexViewYellow = styled.View`
-	flex: 1;
-	backgroundColor: yellow;
+export const YearText = styled.Text`
+	color: ${props => props.isSelected ?'white' : 'black'};
 `;
 
-const CalendarContentWrapper = styled.View`
+const FooterColor = ({disabled, primaryColor, disabledTextColor}) => {
+	if (disabled) {
+		if (disabledTextColor) {
+			return disabledTextColor;
+		}
+		return 'grey';
+	}
+
+	return primaryColor ? primaryColor : '#000';
+};
+
+
+export const FooterText = styled.Text`
+	color: ${props => FooterColor(props)};
+`;
+
+export const CalendarContentWrapper = styled.View`
 	flex: 1;
 	backgroundColor: white;
 	width: ${props => props.calendarWidth ? props.calendarWidth : '328px'};
