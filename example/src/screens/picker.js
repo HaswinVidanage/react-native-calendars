@@ -350,8 +350,17 @@ const PickerScreen = (props) => {
                         style={styles.calendar}
                         hideExtraDays
                         onDayPress={onDayPress}
-                        markingType={'period'}
+                        markingType={props.isMultiSelect ? 'period': 'custom'}
                         markedDates={getMarkedDates()}
+                        theme={{
+	                        backgroundColor: '#ffffff',
+	                        calendarBackground: '#ffffff',
+	                        selectedDayTextColor: '#ffffff',
+	                        selectedDotColor: '#ffffff',
+	                        selectedDayBackgroundColor: props.primaryColor,
+	                        todayTextColor: props.primaryColor,
+	                        dotColor :props.primaryColor,
+                        }}
                     />
                 </CalendarContentWrapper>
             </View>
@@ -395,23 +404,35 @@ const PickerScreen = (props) => {
 
     const getMarkedDates = () => {
 
-    	// TODO handle selectedDay datestring being null
+    	const containerStyle = {
+		    customStyles: {
+			    container: {
+				    backgroundColor: props.primaryColor,
+				    borderRadius: 20
+			    },
+			    text: {
+				    color: 'white',
+				    fontWeight: 'bold'
+			    }
+		    }
+	    };
+
+    	const getContainerStyle = () => {
+    		if  (props.isMultiSelect) {
+    			return {}
+		    }
+    		return containerStyle;
+	    };
         if (props.isMultiSelect) {
             if (selectedDateRange.length === 0) {
                 return {
-                    [selectedDay.dateString]: {textColor: 'green'},
-
-                    // '2020-08-21': {startingDay: true, color: '#50cebb', textColor: 'white'},
-                    // '2020-08-22': {color: '#70d7c7', textColor: 'white'},
-                    // '2020-08-23': {color: '#70d7c7', textColor: 'white', marked: true, dotColor: 'white'},
-                    // '2020-08-24': {color: '#70d7c7', textColor: 'white'},
-                    // '2020-08-25': {endingDay: true, color: '#50cebb', textColor: 'white'},
+                    [selectedDay.dateString]: {color: props.primaryColor, textColor:  'white' , ...getContainerStyle()}
                 }
             }
 
             if (selectedDateRange.length === 1) {
                 return {
-                    [selectedDateRange[0].dateString]: {textColor: 'green'},
+                    [selectedDateRange[0].dateString]: {color: props.primaryColor, textColor:  'white' , ...getContainerStyle()}
                 }
             }
 
@@ -422,7 +443,7 @@ const PickerScreen = (props) => {
         }
 
         return {
-            [selectedDay.dateString]: {textColor: 'green'},
+            [selectedDay.dateString]: {color: props.primaryColor, textColor:  'white', ...getContainerStyle()}
         };
     };
 
@@ -609,7 +630,7 @@ PickerScreen.defaultProps = {
     futureScrollRange: 24,
     calendarWidth: 328,
     removeClippedSubviews: Platform.OS === 'android',
-    isMultiSelect: true,
+    isMultiSelect: false,
 	primaryColor: '#F9A350',
 	disabledTextColor: '#808080',
 	cancelText: 'CANCEL',
