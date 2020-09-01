@@ -79,7 +79,7 @@ const Picker = (props) => {
 			    iconComponent = props.leftIcon
 				    ? props.leftIcon
 				    : <Image
-					    source={require('../calendar/img/previous.png')}
+					    source={require('./assets/previous.png')}
 					    style={{
 						    tintColor: props.primaryColor
 					    }}
@@ -91,7 +91,7 @@ const Picker = (props) => {
 			    iconComponent = props.rightIcon
 				    ? props.rightIcon
 				    : <Image
-					    source={require('../calendar/img/next.png')}
+					    source={require('./assets/next.png')}
 					    style={{
 						    tintColor: props.primaryColor
 					    }}
@@ -102,7 +102,7 @@ const Picker = (props) => {
 			    iconComponent = props.downIcon
 				    ? props.downIcon
 				    : <Image
-					    source={require('../../src/img/down.png')}
+					    source={require('./assets/down.png')}
 					    style={{
 						    tintColor: props.primaryColor
 					    }}

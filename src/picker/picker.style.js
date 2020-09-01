@@ -5,7 +5,7 @@ export const PickerModal = styled.View`
 	justifyContent: center;
 	alignItems: center;
 	marginTop: 22px;
-	backgroundColor: white
+	backgroundColor: white;
 `;
 
 export const ModalView = styled.View`
