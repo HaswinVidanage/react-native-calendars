@@ -41,6 +41,12 @@ const PickerHandler = props => {
 	}, [rows]);
 
 	useEffect(() => {
+		if (props.isMultiSelect && selectedDateRange.length === 0) {
+			setSelectedDateRange([selectedDay])
+		}
+	}, [selectedDay]);
+
+	useEffect(() => {
 		// conditions for ok button to be disabled.
 		// if isMultiSelect, selectedDateRange needs to be of length = 2
 		// selectedDay should not be null
@@ -63,6 +69,8 @@ const PickerHandler = props => {
 			if (selectedDateRange.length < 2) {
 				dates = selectedDateRange;
 			}
+
+			console.log('HDV pre push: ', selectedDateRange, day);
 			dates.push(day);
 
 			if (dates.length === 2) {

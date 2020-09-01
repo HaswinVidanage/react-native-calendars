@@ -254,9 +254,10 @@ const Picker = (props) => {
 		    }
     		return containerStyle;
 	    };
+
         if (props.isMultiSelect) {
             if (selectedDateRange.length === 0) {
-                return {
+            	return {
                     [selectedDay.dateString]: {color: props.primaryColor, textColor:  'white' , ...getContainerStyle()}
                 }
             }
