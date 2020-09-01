@@ -105,13 +105,15 @@ const PickerHandler = props => {
 		setYearChangePerformed(true);
 		setRows([]); // reset flatlist to avoid flatlist from breaking
 		setSelectedYear(yearList[index]);
-		setIsYearSelectionVisible(false);
 		updateCurrentMonthDate(yearList[index]);
+		setIsYearSelectionVisible(false);
 	};
 
 	const updateCurrentMonthDate = (year) => {
 		const date = moment(rows[currentPage]).year(year).format('YYYY-MM-DD');
 		setCurrentDate(date);
+		// TODO : use scroll to index here
+		console.log('HDV Items on update :', rows, rows[currentPage]);
 		scrollToDate(date);
 	};
 
@@ -138,6 +140,7 @@ const PickerHandler = props => {
 		if (!flatListRef.current || index >= rows.length) {
 			return;
 		}
+		setCurrentPage(index);
 		flatListRef.current.scrollToIndex({ animated: true, index })
 	};
 

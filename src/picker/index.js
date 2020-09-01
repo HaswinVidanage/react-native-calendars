@@ -136,7 +136,7 @@ const Picker = (props) => {
 
     const renderCalendarWithSelectableDateWithCallback = useCallback(
 	    (item) => renderCalendarWithSelectableDate(item),
-	    [selectedDay, selectedDateRange]
+	    [selectedDay, selectedDateRange, currentPage, yearChangePerformed]
     );
 
     const renderCalendarWithSelectableDate = ({item}) => {
@@ -324,7 +324,7 @@ const Picker = (props) => {
 
     const getItemLayoutWithCallback = useCallback(
 	    (data, index) => getItemLayout(data, index),
-	    []
+	    [currentPage, yearChangePerformed]
     );
 
     const getItemLayout = (data, index) => {
@@ -398,10 +398,6 @@ const Picker = (props) => {
             return yearSelectionContainer()
         }
 
-        if (yearChangePerformed) {
-        	return;
-        }
-
         return (
             <FlatList
                 horizontal={true}
@@ -419,13 +415,13 @@ const Picker = (props) => {
                 getItemLayout={getItemLayoutWithCallback}
                 extraData={{
                     selectedYear,
-                    currentDate
+                    currentDate,
                 }}
                 pageSize={1}
-                maxToRenderPerBatch={3}
-                updateCellsBatchingPeriod={50}
-                initialNumToRender={3}
-                windowSize={1}
+                maxToRenderPerBatch={1}
+                updateCellsBatchingPeriod={10}
+                initialNumToRender={1}
+                windowSize={props.pastScrollRange + props.futureScrollRange}
             />
         );
     };
@@ -518,6 +514,8 @@ const arePropsEqual = (prevProps, nextProps) => {
 };
 
 export default memo(Picker, arePropsEqual);
+
+// export default Picker;
 
 const styles = StyleSheet.create({
     calendar: {
