@@ -103,18 +103,15 @@ const PickerHandler = props => {
 			return;
 		}
 		setYearChangePerformed(true);
-		setRows([]); // reset flatlist to avoid flatlist from breaking
+		// setRows([]); // reset flatlist to avoid flatlist from breaking
 		setSelectedYear(yearList[index]);
 		updateCurrentMonthDate(yearList[index]);
-		setIsYearSelectionVisible(false);
+		// setIsYearSelectionVisible(false);
 	};
 
 	const updateCurrentMonthDate = (year) => {
 		const date = moment(rows[currentPage]).year(year).format('YYYY-MM-DD');
 		setCurrentDate(date);
-		// TODO : use scroll to index here
-		console.log('HDV Items on update :', rows, rows[currentPage]);
-		scrollToDate(date);
 	};
 
 	const getInitialRows = () => {
@@ -124,8 +121,23 @@ const PickerHandler = props => {
 			const date = moment(initDate.clone()).add(i, "month").format('YYYY-MM-01');
 			rows.push(date);
 		}
+
 		setRows(rows);
-		scrollToDate(moment().format('YYYY-MM-01'));
+		let date = moment().format('YYYY-MM-01');
+		if (yearChangePerformed) {
+			// user needs to be scrolled to the new date
+			date = currentDate;
+		}
+
+		const scrollIndex = rows.findIndex(element => element === date);
+		scrollToIndex(scrollIndex);
+
+		// clear the modal
+		if (yearChangePerformed) {
+			// close the year selection modal only after scroll is complete
+			setIsYearSelectionVisible(false);
+			setYearChangePerformed(false);
+		}
 	};
 
 	const scrollToDate = (date) =>  {
@@ -141,15 +153,15 @@ const PickerHandler = props => {
 			return;
 		}
 		setCurrentPage(index);
-		flatListRef.current.scrollToIndex({ animated: true, index })
+		flatListRef.current.scrollToIndex({ animated: true, index });
 	};
 
 	const onMomentumScrollEnd = (e) => {
 		// Idea is to stop onMomentumScrollEnd from triggering on year change. Since it will always return 0 as current page number
-		if (yearChangePerformed) {
-			setYearChangePerformed(false);
-			return;
-		}
+		// if (yearChangePerformed) {
+		// 	setYearChangePerformed(false);
+		// 	return;
+		// }
 
 		let contentOffset = e.nativeEvent.contentOffset;
 		let viewSize = e.nativeEvent.layoutMeasurement;
@@ -183,7 +195,7 @@ const PickerHandler = props => {
 				selectedDateRange: null
 			});
 		}
-
+		cleanup();
 	};
 
 	const onCancelBtnPress = () => {
@@ -191,6 +203,12 @@ const PickerHandler = props => {
 		if(props.onPickerClosed) {
 			props.onPickerClosed()
 		}
+		cleanup();
+	};
+
+	const cleanup = () => {
+		setCurrentDate(moment().format('YYYY-MM-DD'));
+		setSelectedDateRange([]);
 	};
 
 	const onMonthAdd = () => {

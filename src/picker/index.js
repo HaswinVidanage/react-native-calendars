@@ -113,7 +113,6 @@ const Picker = (props) => {
 					    style={{
 						    padding: 10,
 					    }}
-					    hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
 				    >
 					    {iconComponent}
 				    </DropDownArrow>
@@ -127,7 +126,6 @@ const Picker = (props) => {
 			    style={{
 				    padding: 10,
 			    }}
-			    hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
 		    >
 			    {iconComponent}
 		    </MonthPaginationButton>
@@ -136,7 +134,7 @@ const Picker = (props) => {
 
     const renderCalendarWithSelectableDateWithCallback = useCallback(
 	    (item) => renderCalendarWithSelectableDate(item),
-	    [selectedDay, selectedDateRange, currentPage, yearChangePerformed]
+	    [selectedDay, selectedDateRange, currentPage, yearChangePerformed, rows]
     );
 
     const renderCalendarWithSelectableDate = ({item}) => {
@@ -185,6 +183,14 @@ const Picker = (props) => {
 	                        selectedDayBackgroundColor: props.primaryColor,
 	                        todayTextColor: props.primaryColor,
 	                        dotColor :props.primaryColor,
+	                        "stylesheet.day.period": {
+		                        base: {
+			                        alignItems: "center",
+			                        height: 34,
+			                        overflow: "hidden",
+			                        width: 38,
+		                        },
+	                        },
                         }}
                     />
                 </CalendarContentWrapper>
@@ -337,9 +343,9 @@ const Picker = (props) => {
     const yearButton = (idx) => {
 	    const isSelected = (yearList[idx] === selectedYear);
         return (
-            <YearButton onPress={() => handleYearPress(idx)}>
-	            <YearTextWrapper isSelected={isSelected} primaryColor={props.primaryColor}>
-		            <YearText isSelected={isSelected}>
+            <YearButton onPress={() => handleYearPress(idx)} key={idx}>
+	            <YearTextWrapper isSelected={isSelected} key={idx} primaryColor={props.primaryColor}>
+		            <YearText isSelected={isSelected} key={idx}>
 			            {yearList[idx]}
 		            </YearText>
 	            </YearTextWrapper>
@@ -358,7 +364,7 @@ const Picker = (props) => {
                   yearBtn
               );
           }
-          table.push(<YearRow>{children}</YearRow>)
+          table.push(<YearRow key={i}>{children}</YearRow>)
       }
 
       return (
@@ -419,9 +425,9 @@ const Picker = (props) => {
                 }}
                 pageSize={1}
                 maxToRenderPerBatch={1}
-                updateCellsBatchingPeriod={10}
+                updateCellsBatchingPeriod={Platform.OS === 'android'? 50: 10}
                 initialNumToRender={1}
-                windowSize={props.pastScrollRange + props.futureScrollRange}
+                windowSize={ Platform.OS === 'android' ? props.pastScrollRange + props.futureScrollRange: 1 }
             />
         );
     };
@@ -451,6 +457,9 @@ const Picker = (props) => {
 
 };
 
+const DEFAULT_PAST_SCROLL_RANGE = 24;
+const DEFAULT_FUTURE_SCROLL_RANGE = 24;
+
 Picker.defaultProps = {
 	isPickerVisible: true,
 	handlePickerVisibility: (isVisible) => {},
@@ -460,8 +469,8 @@ Picker.defaultProps = {
 	onPickerClosed: () => {},
 	onMonthChange: () => {},
 	onYearSelectedToggled: () => {},
-    pastScrollRange: 24,
-    futureScrollRange: 24,
+    pastScrollRange: DEFAULT_PAST_SCROLL_RANGE,
+    futureScrollRange: DEFAULT_FUTURE_SCROLL_RANGE,
     calendarWidth: 328,
 	calendarHeight: 310,
     removeClippedSubviews: Platform.OS === 'android',
@@ -469,7 +478,13 @@ Picker.defaultProps = {
 	primaryColor: '#F9A350',
 	disabledTextColor: '#808080',
 	cancelText: 'CANCEL',
-	okText: 'OK'
+	okText: 'OK',
+
+	pageSize: 1,
+	maxToRenderPerBatch: 1,
+	updateCellsBatchingPeriod: Platform.OS === 'android'? 50: 10,
+	initialNumToRender: 1,
+	windowSize: Platform.OS === 'android' ? (DEFAULT_PAST_SCROLL_RANGE + DEFAULT_PAST_SCROLL_RANGE): 1
 };
 
 Picker.propTypes = {
