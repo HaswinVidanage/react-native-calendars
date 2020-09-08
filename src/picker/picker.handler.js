@@ -70,7 +70,6 @@ const PickerHandler = props => {
 				dates = selectedDateRange;
 			}
 
-			console.log('HDV pre push: ', selectedDateRange, day);
 			dates.push(day);
 
 			if (dates.length === 2) {
