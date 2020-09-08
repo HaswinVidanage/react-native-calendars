@@ -110,10 +110,8 @@ const PickerHandler = props => {
 			return;
 		}
 		setYearChangePerformed(true);
-		// setRows([]); // reset flatlist to avoid flatlist from breaking
 		setSelectedYear(yearList[index]);
 		updateCurrentMonthDate(yearList[index]);
-		// setIsYearSelectionVisible(false);
 	};
 
 	const updateCurrentMonthDate = (year) => {
