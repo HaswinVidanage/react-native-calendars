@@ -9,7 +9,8 @@ import {
     Image,
 } from 'react-native';
 import Calendar from '../calendar'
-import moment from 'moment';import {
+import moment from 'moment';
+import {
 	PickerModal,
 	ModalView,
 	PickerHeader,
