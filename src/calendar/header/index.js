@@ -28,12 +28,14 @@ class CalendarHeader extends Component {
     disableArrowRight: PropTypes.bool,
     webAriaLevel: PropTypes.number,
     disabledDaysIndexes: PropTypes.arrayOf(PropTypes.number),
-    renderHeader: PropTypes.any
+    renderHeader: PropTypes.any,
+    renderTopHeader: PropTypes.bool
   };
 
   static defaultProps = {
     monthFormat: 'MMMM yyyy',
-    webAriaLevel: 1
+    webAriaLevel: 1,
+    renderTopHeader: true,
   };
 
   constructor(props) {
@@ -77,6 +79,9 @@ class CalendarHeader extends Component {
       return true;
     }
     if (nextProps.disableArrowRight !== this.props.disableArrowRight) {
+      return true;
+    }
+    if (nextProps.renderTopHeader !== this.props.renderTopHeader) {
       return true;
     }
     return false;
@@ -203,6 +208,7 @@ class CalendarHeader extends Component {
         accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
         importantForAccessibility={this.props.importantForAccessibility} // Android
       >
+        {this.props.renderTopHeader &&
         <View style={this.style.header}>
           {leftArrow}
           <View style={this.style.headerContainer}>
@@ -211,6 +217,7 @@ class CalendarHeader extends Component {
           </View>
           {rightArrow}
         </View>
+        }
         {!this.props.hideDayNames &&
           <View style={this.style.week}>
             {this.props.weekNumbers &&
