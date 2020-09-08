@@ -81,7 +81,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('./assets/previous.png')}
 					    style={{
-						    tintColor: props.primaryColor
+						    tintColor: '#303030'
 					    }}
 				    />;
 			    break;
@@ -93,7 +93,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('./assets/next.png')}
 					    style={{
-						    tintColor: props.primaryColor
+						    tintColor: '#303030'
 					    }}
 				    />;
 			    break;
@@ -104,7 +104,7 @@ const Picker = (props) => {
 				    : <Image
 					    source={require('./assets/down.png')}
 					    style={{
-						    tintColor: props.primaryColor
+						    tintColor: '#303030'
 					    }}
 				    />;
 
