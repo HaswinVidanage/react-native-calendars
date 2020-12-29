@@ -13,7 +13,6 @@ import MultiPeriodDay from './day/multi-period';
 import SingleDay from './day/custom';
 import CalendarHeader from './header';
 import shouldComponentUpdate from './updater';
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {SELECT_DATE_SLOT} from '../testIDs';
 
 //Fallback for react-native-web or when RN version is < 0.44
@@ -295,30 +294,6 @@ class Calendar extends Component {
     }
   }
 
-  onSwipe = (gestureName) => {
-    const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
-
-    switch (gestureName) {
-    case SWIPE_UP:
-    case SWIPE_DOWN:
-      break;
-    case SWIPE_LEFT:
-      this.onSwipeLeft();
-      break;
-    case SWIPE_RIGHT:
-      this.onSwipeRight();
-      break;
-    }
-  }
-
-  onSwipeLeft = () => {
-    this.header.onPressRight();
-  }
-
-  onSwipeRight = () => {
-    this.header.onPressLeft();
-  }
-
   renderWeekNumber(weekNumber) {
     return (
       <View style={{flex: 1, alignItems: 'center'}} key={`week-container-${weekNumber}`}>
@@ -349,7 +324,7 @@ class Calendar extends Component {
 
   render() {
     const {currentMonth} = this.state;
-    const {firstDay, showSixWeeks, hideExtraDays, enableSwipeMonths} = this.props;
+    const {firstDay, showSixWeeks, hideExtraDays} = this.props;
     const shouldShowSixWeeks = showSixWeeks && !hideExtraDays;
     const days = dateutils.page(currentMonth, firstDay, shouldShowSixWeeks);
 
@@ -368,47 +343,38 @@ class Calendar extends Component {
       }
     }
 
-    const GestureComponent = enableSwipeMonths ? GestureRecognizer : View;
-    const gestureProps = enableSwipeMonths ? {onSwipe: (direction, state) => this.onSwipe(direction, state)} : {};
-
     return (
-      <GestureComponent {...gestureProps}
-        config={{
-          velocityThreshold: 0.1,
-        }}
-      >
         <View
-          style={[this.style.container, this.props.style]}
-          accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
-          importantForAccessibility={this.props.importantForAccessibility} // Android
+            style={[this.style.container, this.props.style]}
+            accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
+            importantForAccessibility={this.props.importantForAccessibility} // Android
         >
           <CalendarHeader
-            testID={this.props.testID}
-            ref={c => this.header = c}
-            style={this.props.headerStyle}
-            theme={this.props.theme}
-            hideArrows={this.props.hideArrows}
-            month={this.state.currentMonth}
-            addMonth={this.addMonth}
-            showIndicator={indicator}
-            firstDay={this.props.firstDay}
-            showSixWeeks={this.props.showSixWeeks}
-            renderArrow={this.props.renderArrow}
-            monthFormat={this.props.monthFormat}
-            hideDayNames={this.props.hideDayNames}
-            weekNumbers={this.props.showWeekNumbers}
-            onPressArrowLeft={this.props.onPressArrowLeft}
-            onPressArrowRight={this.props.onPressArrowRight}
-            webAriaLevel={this.props.webAriaLevel}
-            disableArrowLeft={this.props.disableArrowLeft}
-            disableArrowRight={this.props.disableArrowRight}
-            disabledDaysIndexes={this.props.disabledDaysIndexes}
-            renderHeader={this.props.renderHeader}
-            renderTopHeader={this.props.renderTopHeader}
+              testID={this.props.testID}
+              ref={c => this.header = c}
+              style={this.props.headerStyle}
+              theme={this.props.theme}
+              hideArrows={this.props.hideArrows}
+              month={this.state.currentMonth}
+              addMonth={this.addMonth}
+              showIndicator={indicator}
+              firstDay={this.props.firstDay}
+              showSixWeeks={this.props.showSixWeeks}
+              renderArrow={this.props.renderArrow}
+              monthFormat={this.props.monthFormat}
+              hideDayNames={this.props.hideDayNames}
+              weekNumbers={this.props.showWeekNumbers}
+              onPressArrowLeft={this.props.onPressArrowLeft}
+              onPressArrowRight={this.props.onPressArrowRight}
+              webAriaLevel={this.props.webAriaLevel}
+              disableArrowLeft={this.props.disableArrowLeft}
+              disableArrowRight={this.props.disableArrowRight}
+              disabledDaysIndexes={this.props.disabledDaysIndexes}
+              renderHeader={this.props.renderHeader}
+              renderTopHeader={this.props.renderTopHeader}
           />
           <View style={this.style.monthView}>{weeks}</View>
         </View>
-      </GestureComponent>
     );
   }
 }
