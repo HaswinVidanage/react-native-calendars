@@ -41,9 +41,13 @@ class Reservation extends Component {
   }
 
   renderDate(date, item) {
-    if (_.isFunction(this.props.renderDay)) {
-      return this.props.renderDay(date ? xdateToData(date) : undefined, item);
+    if (this.props.renderDay) {
+      let ret =  this.props.renderDay(date ? xdateToData(date) : undefined, item);
+      if (ret) {
+        return ret;
+      }
     }
+
     const today = dateutils.sameDate(date, XDate()) ? this.styles.today : undefined;
     if (date) {
       return (

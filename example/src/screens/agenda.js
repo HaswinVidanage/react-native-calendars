@@ -20,9 +20,9 @@ export default class AgendaScreen extends Component {
         testID={testIDs.agenda.CONTAINER}
         items={this.state.items}
         loadItemsForMonth={this.loadItems.bind(this)}
-        selected={'2017-05-16'}
+        // selected={'2017-05-16'}
         renderItem={this.renderItem.bind(this)}
-        renderEmptyDate={this.renderEmptyDate.bind(this)}
+        renderEmptyData={this.renderEmptyDate.bind(this)}
         rowHasChanged={this.rowHasChanged.bind(this)}
         // markingType={'period'}
         // markedDates={{
@@ -36,8 +36,13 @@ export default class AgendaScreen extends Component {
         //    '2017-05-26': {endingDay: true, color: 'gray'}}}
         // monthFormat={'yyyy'}
         // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-        //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-        // hideExtraDays={false}
+        renderDay={(day, item) => {
+          if (!item) {
+            return (<View></View>)
+          }
+          // return (<Text>{day ? day.day: 'item'}</Text>)
+        }}
+        hideExtraDays={false}
       />
     );
   }
@@ -60,6 +65,10 @@ export default class AgendaScreen extends Component {
       }
       const newItems = {};
       Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+
+      // remove few days
+      delete newItems['2020-12-25'];
+      delete newItems['2020-12-30'];
       this.setState({
         items: newItems
       });
@@ -70,7 +79,7 @@ export default class AgendaScreen extends Component {
     return (
       <TouchableOpacity
         testID={testIDs.agenda.ITEM}
-        style={[styles.item, {height: item.height}]} 
+        style={[styles.item, {height: item.height}]}
         onPress={() => Alert.alert(item.name)}
       >
         <Text>{item.name}</Text>
@@ -79,10 +88,14 @@ export default class AgendaScreen extends Component {
   }
 
   renderEmptyDate() {
+    // return (
+    //   <View style={styles.emptyDate}>
+    //     <Text>This is empty date!</Text>
+    //   </View>
+    // );
+
     return (
-      <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
-      </View>
+      <View style={{height:0}}></View>
     );
   }
 

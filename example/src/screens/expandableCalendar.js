@@ -70,9 +70,7 @@ export default class ExpandableCalendarScreen extends Component {
 
   renderEmptyItem() {
     return (
-      <View style={styles.emptyItem}>
-        <Text style={styles.emptyItemText}>No Events Planned</Text>
-      </View>
+      <View style={{height:0}}></View>
     );
   }
 
