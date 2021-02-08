@@ -72,7 +72,21 @@ class ReservationList extends Component {
       }
       this.scrollOver = false;
       this.list.scrollToOffset({offset: scrollPosition, animated: true});
+      // const scrollIndex = this.state.reservations.findIndex(element => {
+      //   console.log('HDV element: ', props.selectedDay.toString('yyyy-MM-dd'));
+      //   return element.date &&  element.date.toString('yyyy-MM-dd') === props.selectedDay.toString('yyyy-MM-dd');
+      // });
+      // this.list.scrollToIndex(scrollIndex);
+      // if (scrollIndex > 0) {
+      //   console.log('HDV scrollIndex: ', scrollIndex)
+      //   this.list.scrollToIndex({animated: false, index: scrollIndex});
+      // }
+
+      console.log('HDV scrollPosition: ', props.selectedDay);
     }
+
+
+
     this.selectedDay = props.selectedDay;
     this.updateDataSource(reservations.reservations);
   }
@@ -154,6 +168,7 @@ class ReservationList extends Component {
     this.scrollOver = true;
   }
 
+  // here
   getReservations(props) {
     if (!props.reservations || !props.selectedDay) {
       return {reservations: [], scrollPosition: 0};
@@ -174,7 +189,7 @@ class ReservationList extends Component {
     }
     const scrollPosition = reservations.length;
     const iterator = props.selectedDay.clone();
-    for (let i = 0; i < 31; i++) {
+    for (let i = 0; i < 365; i++) {
       const res = this.getReservationsForDay(iterator, props);
       if (res) {
         reservations = reservations.concat(res);
