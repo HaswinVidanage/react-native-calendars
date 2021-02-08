@@ -4,7 +4,6 @@ import {Agenda} from 'react-native-calendars';
 
 const testIDs = require('../testIDs');
 
-
 export default class AgendaScreen extends Component {
   constructor(props) {
     super(props);
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
   },
   emptyDate: {
     height: 15,
-    flex:1,
+    flex: 1,
     paddingTop: 30
   }
 });
