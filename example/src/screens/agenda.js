@@ -10,11 +10,34 @@ export default class AgendaScreen extends Component {
     super(props);
 
     this.state = {
-      items: {}
+      items: {
+        '2021-02-18' : [],
+        '2021-02-19' : [],
+        '2021-02-20' : [],
+        '2021-02-21' : [],
+        '2021-02-22' : [],
+        '2021-02-23' : [
+          {
+            name: 'Item for 2021-02-23',
+            height: 95
+          },
+          {
+            name: 'Item for 2021-02-23',
+            height: 50
+          }
+        ],
+        '2021-02-24' : [
+          {
+            name: 'Item for 2021-01-24',
+            height: 50
+          }
+        ]
+      }
     };
   }
 
   render() {
+    console.log('HDV this.state.items: ', this.state.items)
     return (
         <Agenda
             testID={testIDs.agenda.CONTAINER}
@@ -48,30 +71,30 @@ export default class AgendaScreen extends Component {
     );
   }
   loadItems(day) {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(50, Math.floor(Math.random() * 150))
-            });
-          }
-        }
-      }
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-      // remove few days
-      delete newItems['2020-12-25'];
-      delete newItems['2020-12-30'];
-      this.setState({
-        items: newItems
-      });
-    }, 1000);
+    // setTimeout(() => {
+    //   for (let i = -15; i < 85; i++) {
+    //     const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+    //     const strTime = this.timeToString(time);
+    //     if (!this.state.items[strTime]) {
+    //       this.state.items[strTime] = [];
+    //       const numItems = Math.floor(Math.random() * 3 + 1);
+    //       for (let j = 0; j < numItems; j++) {
+    //         this.state.items[strTime].push({
+    //           name: 'Item for ' + strTime + ' #' + j,
+    //           height: Math.max(50, Math.floor(Math.random() * 150))
+    //         });
+    //       }
+    //     }
+    //   }
+    //   const newItems = {};
+    //   Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+    //   // remove few days
+    //   delete newItems['2020-12-25'];
+    //   delete newItems['2020-12-30'];
+    //   this.setState({
+    //     items: newItems
+    //   });
+    // }, 1000);
   }
 
   renderItem(item) {
