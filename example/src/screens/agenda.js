@@ -322,6 +322,7 @@ export default class AgendaScreen extends Component {
             // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
             //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
             // hideExtraDays={false}
+            disableAllTouchEventsForDisabledDays
         />
     );
   }
