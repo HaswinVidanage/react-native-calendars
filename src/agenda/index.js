@@ -95,7 +95,9 @@ export default class AgendaView extends Component {
     /** Called when the momentum scroll starts for the agenda list. **/
     onMomentumScrollBegin: PropTypes.func,
     /** Called when the momentum scroll stops for the agenda list. **/
-    onMomentumScrollEnd: PropTypes.func
+    onMomentumScrollEnd: PropTypes.func,
+    /** Disable touch events for disabled dates **/
+    disableAllTouchEventsForDisabledDays: PropTypes.bool
   };
 
   constructor(props) {
@@ -455,7 +457,7 @@ export default class AgendaView extends Component {
               disabledByDefault={this.props.disabledByDefault}
               displayLoadingIndicator={this.props.displayLoadingIndicator}
               showWeekNumbers={this.props.showWeekNumbers}
-              disableAllTouchEventsForDisabledDays={true}
+              disableAllTouchEventsForDisabledDays={this.props.disableAllTouchEventsForDisabledDays}
             />
           </Animated.View>
           {knob}
