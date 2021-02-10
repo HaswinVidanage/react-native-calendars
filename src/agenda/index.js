@@ -355,7 +355,6 @@ export default class AgendaView extends Component {
     }
 
     const key = this.state.selectedDay.toString('yyyy-MM-dd');
-    console.log('HDV marked: ', {...markings, [key]: {...(markings[key] || {}), ...{selected: true}}})
     return {...markings, [key]: {...(markings[key] || {}), ...{selected: true}}};
   }
 
