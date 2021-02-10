@@ -73,6 +73,9 @@ class ReservationList extends Component {
       this.scrollOver = false;
       this.list.scrollToOffset({offset: scrollPosition, animated: true});
     }
+
+
+
     this.selectedDay = props.selectedDay;
     this.updateDataSource(reservations.reservations);
   }
@@ -154,6 +157,7 @@ class ReservationList extends Component {
     this.scrollOver = true;
   }
 
+  // here
   getReservations(props) {
     if (!props.reservations || !props.selectedDay) {
       return {reservations: [], scrollPosition: 0};
@@ -174,7 +178,7 @@ class ReservationList extends Component {
     }
     const scrollPosition = reservations.length;
     const iterator = props.selectedDay.clone();
-    for (let i = 0; i < 31; i++) {
+    for (let i = 0; i < 365; i++) {
       const res = this.getReservationsForDay(iterator, props);
       if (res) {
         reservations = reservations.concat(res);
